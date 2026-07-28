@@ -179,7 +179,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.47</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.48</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -447,7 +447,7 @@
   <button type="button" onclick="var t=document.getElementById('viewtabs');window.scrollTo({top:0,behavior:'smooth'})">▲ 위로</button>
   <button type="button" class="gen" onclick="if(window.__showTab)window.__showTab('out');document.getElementById('genbtn').click();window.scrollTo({top:0,behavior:'smooth'})">파일 생성 →</button>
 </nav>
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.47</b> · 2026-07-27<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.48</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -2334,7 +2334,7 @@ function r1dec(v){return (v&&typeof v==='object'&&v.__b64__)?b64u8(v.__b64__):v;
 
 function Builder(){this.sql=['BEGIN;'];this.dev=10;this.cid=100;this.sg=1;this.ap=1;this.ff=1;this.parts={};this.order=[];this.subseq={};this.devinfo={};}
 // 유효 픽 데이터로 플라잉 프레임 기록(홀·좌표 유효 + LoadBeamPosition='standard' → 크래시 방지)
-Builder.prototype.flyingFrame=function(sg,mdl,horiz,ox,oy,oz,single,cogHole,ncab){
+Builder.prototype.flyingFrame=function(sg,mdl,horiz,ox,oy,oz,single,cogHole,ncab,tilt){
   var geo=FRAME_GEO[mdl]; if(!geo) return;   // 미검증 시리즈 → 프레임 생략(ArrayCalc 자동생성)
   var A=geo[0],pitch=geo[1],rear=geo[2], h=(horiz||0)*Math.PI/180;
   var ch=Math.max(1,Math.min(rear-1,Math.round(cogHole)));   // 1점식/CoG 홀 클램프
@@ -2345,7 +2345,7 @@ Builder.prototype.flyingFrame=function(sg,mdl,horiz,ox,oy,oz,single,cogHole,ncab
   var tw=(ncab>0)?R(ncab*(CAB_W[mdl]||60)+(FRAME_W[mdl]||65),4):-1;
   var ffid=this.ff++, disp=FRAME_NAME[mdl].replace('FlyingFrame',' Flying frame');
   this.sql.push("INSERT INTO FlyingFrames(FlyingFrameId,Type,Name,DisplayName,SourceGroupId,PositionIndex,FrameAngle,FrontPickPointHole,RearPickPointHole,SinglePickPointHole,TotalWeight,FrontPickPointWeight,RearPickPointWeight,FrontPickPointWeightZeroDegrees,RearPickPointWeightZeroDegrees,FrontPickX,FrontPickY,RearPickX,RearPickY,SinglePickX,SinglePickY,FrontPickPointPosition,RearPickPointPosition,SinglePickPointPosition,OriginX,OriginY,OriginZ,LoadBeamPosition) VALUES("
-    +ffid+",2,'"+FRAME_NAME[mdl]+"','"+disp+"',"+sg+",1,0.0,"+fh+","+rear+","+srh+","+tw+",-1,-1,-1,-1,"
+    +ffid+",2,'"+FRAME_NAME[mdl]+"','"+disp+"',"+sg+",1,"+R(-(tilt||0),2)+","+fh+","+rear+","+srh+","+tw+",-1,-1,-1,-1,"
     +R(f[0],6)+","+R(f[1],6)+","+R(r[0],6)+","+R(r[1],6)+","+R(s[0],6)+","+R(s[1],6)+","
     +R(f[2],4)+","+R(r[2],4)+","+R(s[2],4)+","+R(ox,2)+","+R(oy,2)+","+R(oz,2)+",'standard');");
 };
@@ -2487,7 +2487,7 @@ Builder.prototype.lineArray=function(name,system,amp,sideY,topz,tilt,boxes,splay
     for(var ci=0;ci<cums.length;ci++){var dx=chH*Math.sin(cums[ci]*Math.PI/180);cxs+=x+0.5*dx;x+=dx;}
     var cogx=cums.length?cxs/cums.length:0;
     var cogHole=(cogx+(COG_BASE[_fs]||0.4)-0.025)/pitch;
-    this.flyingFrame(sg,_fs,horiz,ox,sideY,oz,_single,cogHole,subN+n);
+    this.flyingFrame(sg,_fs,horiz,ox,sideY,oz,_single,cogHole,subN+n,tilt);
   }
   return sg;
 };
@@ -2969,5 +2969,6 @@ window.DBSD_WEBGEN=function(spec,env){
   }finally{ db.close(); }
 };
 })();
+
 </script>
 <!-- DBSD-WEBGEN-END -->

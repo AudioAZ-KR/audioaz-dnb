@@ -184,7 +184,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.52</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.53</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -192,7 +192,7 @@
       <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">제목</span>
       <input type="text" id="projName" value="" placeholder="제목 입력(필수)" style="width:128px;padding:7px 10px" aria-label="프로젝트 제목" required>
       <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">버전</span>
-      <input type="text" id="projVer" value="v.1" placeholder="버전" style="width:52px;padding:7px 10px" aria-label="버전">
+      <span id="verBadge" style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--brand);background:rgba(24,119,242,.12);border-radius:6px;padding:6px 10px;min-width:36px;text-align:center;user-select:none" title="제목별 자동 버전 — 같은 제목으로 추출할 때마다 올라갑니다. 새 제목은 v.1부터.">v.1</span>
       <button class="themebtn" id="openbtn" type="button" title="저장된 설정(.json) 불러오기">설정 열기</button>
       <input type="file" id="openFile" accept=".json,application/json" style="display:none">
       <button class="themebtn" id="genbtn" type="button" style="background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600">ArrayCalc 파일 생성 →</button>
@@ -452,7 +452,7 @@
   <button type="button" onclick="var t=document.getElementById('viewtabs');window.scrollTo({top:0,behavior:'smooth'})">▲ 위로</button>
   <button type="button" class="gen" onclick="if(window.__showTab)window.__showTab('out');document.getElementById('genbtn').click();window.scrollTo({top:0,behavior:'smooth'})">파일 생성 →</button>
 </nav>
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.52</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.53</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -1592,7 +1592,7 @@
   }
   function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
   $('rptbtn').addEventListener('click',function(){
-    var pn=($('projName').value||'제목 없음').trim()||'제목 없음', pv=($('projVer').value||'v.1').trim();
+    var pn=($('projName').value||'제목 없음').trim()||'제목 없음', pv=(pn===lastGenName?lastGenVer:'v.'+nextVer(pn));
     var dt=new Date(), ds=dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2);
     var type=decideType();
     var B='#1877F2';
@@ -1677,10 +1677,14 @@
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
   });
-  var lastGenName=null;
-  function bumpVer(v){ var m=(v||'').match(/^(.*?)(\d+)(\D*)$/); if(m){return m[1]+(parseInt(m[2],10)+1)+m[3];} return (v||'v.1')+'.2'; }
+  var lastGenName=null, lastGenVer='v.1';
+  function verMap(){ try{return JSON.parse(localStorage.getItem('dbsd_vers')||'{}');}catch(e){return {};} }
+  function nextVer(name){ var m=verMap(); return (m[name]||0)+1; }          // 제목별 다음 버전 번호(올리지 않음)
+  function commitVer(name,n){ var m=verMap(); m[name]=n; try{localStorage.setItem('dbsd_vers',JSON.stringify(m));}catch(e){} }
+  function updVerBadge(){ var el=$('verBadge'); if(!el) return; var n=($('projName').value||'').trim(); el.textContent='v.'+(n?nextVer(n):1); }
+  try{ $('projName').addEventListener('input',updVerBadge); updVerBadge(); }catch(e){}   // 제목 바뀌면 다음 버전 배지 갱신
   $('genbtn').addEventListener('click',function(){
-    var pn=($('projName').value||'').trim(),pv=($('projVer').value||'v.1').trim();
+    var pn=($('projName').value||'').trim();
     if(!pn){   // 제목 필수 — 없으면 생성 불가
       $('projName').focus();
       try{$('projName').style.borderColor='var(--crit)';setTimeout(function(){$('projName').style.borderColor='';},1500);}catch(e){}
@@ -1688,8 +1692,7 @@
       try{$('genText').textContent='';}catch(e){}
       return;
     }
-    if(pn===lastGenName){ pv=bumpVer(pv); $('projVer').value=pv; }
-    lastGenName=pn;
+    var vnum=nextVer(pn); var pv='v.'+vnum; commitVer(pn,vnum); lastGenName=pn; lastGenVer=pv; updVerBadge();   // 제목별 자동 버전(같은 제목=올림, 새 제목=v.1)
     var type=decideType(),L=['ArrayCalc 파일 생성 — 프로젝트명 "'+pn+'" '+pv+' (파일명에 오늘 날짜 붙이고, 어디에 저장할지 먼저 물어봐줘). 각 라인어레이 통별 8/12·스플레이가 파일과 일치하는지 체크:'];
     function arr(mdl,box){var vp=variantPair(mdl);if(!vp)return mdl+' ×'+box;var vs=boxVariants(mdl,box),n12=vs.filter(function(v){return v===vp[1];}).length;return vp[0]+'×'+(box-n12)+'(상단)+'+vp[1]+'×'+n12+'(하단)';}
     if(type==='line')L.push('· 메인: '+arr(S.mMdl,S.mBox)+' /측(총 '+S.mBox*2+') · '+S.mAmp+' · 스플레이 '+splayArray(S.mBox,effSplay(S.splayAuto,S.splayMax),msOf(S.mMdl)).join('/')+'° (최대 '+msOf(S.mMdl)+'°) · '+(S.mMount==='stack'?'그라운드 스택 · 베이스각 '+S.mTilt+'° · 상향 라운드 커브':'틸트 '+S.mTilt+'° · '+(S.rigPts==='1'?'1점':'2점')+'리깅'));
@@ -1816,7 +1819,7 @@
     ['depth','width','stageW','trim','spl','program','preset','mMdl','mAmp','mBox','mTilt','splayMax','mHoriz','sMdl','sAmp','sBox','subPos','sCfg','fSubBox','fMdl','fAmp','fBox','fAim','dMdl','dAmp','dBox','dAim','dSplayMax','dHeight','cMdl','cAmp','cBox','cAim','cSplayMax','oMdl','oAmp','oBox','oTilt','oSplayMax','oHoriz'].forEach(function(id){
       var el=$(id); if(el && S[id]!==undefined && S[id]!==null) el.value=S[id];
     });
-    $('projName').value=S.projName||''; $('projVer').value=S.projVer||'v.1';
+    $('projName').value=S.projName||''; updVerBadge();
     ['fOn','dOn','cOn','oOn','fSubOn','fRot'].forEach(function(id){ var el=$(id); if(el) el.checked=!!S[id]; });
     ['env','maintype','dtype','rigPts','dRigPts','cRigPts','oRigPts','mMount','dMount','oMount','cType','oType','fType'].forEach(function(id){
       var seg=$(id); if(!seg) return; seg.querySelectorAll('button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v===String(S[id])?'true':'false'); });

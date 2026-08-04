@@ -220,7 +220,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.54</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.55</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -527,7 +527,7 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.54</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.55</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -2150,6 +2150,17 @@
         }
         x.fillStyle=col;x.globalAlpha=sel?1:.8;x.font='700 10px ui-monospace,monospace';x.textAlign='center';
         x.fillText(q.n,(c.fl.x+c.bl.x)/2,Yy((q.ycf+q.ycb)/2)+3);x.globalAlpha=1;
+        // ── 변 치수 라벨(m) ──
+        var fm=function(v){ return (Math.round(v*10)/10)+'m'; }, dimA=sel?1:.6;
+        x.font=(sel?'700 ':'')+'9.5px ui-monospace,monospace'; x.fillStyle=col; x.globalAlpha=dimA;
+        x.textAlign='right'; x.fillText(fm(q.wf), c.fl.x-7, (c.fl.y+c.fr.y)/2-4);              // 앞변(폭) — 왼쪽 바깥, 살짝 위
+        x.textAlign='left';  x.fillText(fm(q.wb), c.bl.x+7, (c.bl.y+c.br.y)/2+11);             // 뒷변(폭) — 오른쪽 바깥, 살짝 아래(이웃면 라벨과 충돌 방지)
+        var eT=Math.sqrt(q.d*q.d+Math.pow((q.ycb-q.wb/2)-(q.ycf-q.wf/2),2));                   // 사이드 변 실제 길이
+        var eB=Math.sqrt(q.d*q.d+Math.pow((q.ycb+q.wb/2)-(q.ycf+q.wf/2),2));
+        x.textAlign='center';
+        x.fillText(fm(eT), (c.fl.x+c.bl.x)/2, Math.min(c.fl.y,c.bl.y)-6);                      // 위 변 — 위쪽
+        x.fillText(fm(eB), (c.fr.x+c.br.x)/2, Math.max(c.fr.y,c.br.y)+13);                     // 아래 변 — 아래쪽
+        x.globalAlpha=1;
       });
     }
     function drawSide(){
@@ -2180,7 +2191,17 @@
         x.strokeStyle=col;x.lineWidth=sel?3:2;x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.stroke();
         if(sel){ [[x0,y0],[x1,y1]].forEach(function(p){ x.fillStyle=col;x.beginPath();x.arc(p[0],p[1],4.5,0,7);x.fill();x.strokeStyle='#fff';x.lineWidth=1.3;x.stroke(); }); }
         x.fillStyle=col;x.globalAlpha=sel?1:.8;x.font='700 9.5px ui-monospace,monospace';x.textAlign='center';
-        x.fillText(q.n,(x0+x1)/2,Math.min(y0,y1)-7);x.globalAlpha=1;
+        x.fillText(q.n+' '+(Math.round(q.d*10)/10)+'m',(x0+x1)/2,Math.min(y0,y1)-7);x.globalAlpha=1;
+        // ── 높이 라벨 + 보조선 ──
+        var fm2=function(v){ return (Math.round(v*100)/100)+'m'; }, dA=sel?1:.6;
+        x.font=(sel?'700 ':'')+'9.5px ui-monospace,monospace'; x.fillStyle=col;
+        if(q.z0>0.01){ x.setLineDash([2,3]); x.strokeStyle=col; x.globalAlpha=.45;
+          x.beginPath();x.moveTo(x0,floorY);x.lineTo(x0,y0);x.stroke(); x.setLineDash([]); }
+        x.globalAlpha=dA; x.textAlign='right'; x.fillText('H '+fm2(q.z0), x0-6, (q.z0>0.01?(y0+floorY)/2+3:y0-8));   // 앞 높이
+        if(q.z1>0.01){ x.setLineDash([2,3]); x.strokeStyle=col; x.globalAlpha=.45;
+          x.beginPath();x.moveTo(x1,floorY);x.lineTo(x1,y1);x.stroke(); x.setLineDash([]); }
+        x.globalAlpha=dA; x.textAlign='left'; x.fillText('H '+fm2(q.z1), x1+6, (q.z1>0.01?(y1+floorY)/2+3:y1-8));    // 뒤 높이
+        x.globalAlpha=1;
       });
     }
     function veTable(){

@@ -248,7 +248,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.66</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.67</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -578,7 +578,7 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.66</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.67</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -855,9 +855,33 @@
     var padL=44,padR=22,padB=40,padT=16,maxD=Math.max(S.depth,20),sx=(W-padL-padR)/maxD,gY=H-padB;
     function X(m){return padL+m*sx;} function Y(h){return gY-h*((H-padT-padB)/16);}
     var rake=Math.min(S.depth*0.12,58);
-    // find where a ray (downtilt aimDeg) from (ox,oy) first meets floor or a canvas edge
-    function rayHit(ox,oy,aimDeg){ var a=aimDeg*Math.PI/180,c=Math.cos(a),s=Math.sin(a),x0=X(0),xd=X(S.depth),m=-rake/(xd-x0);
-      var den=s-m*c, t=Math.abs(den)>1e-4?((m*(ox-x0)+gY-oy)/den):1e6; if(t<=0)t=1e6;
+    // ── 베뉴 편집기 프로파일(우측면도): 커스텀 베뉴가 있으면 실제 관객면 램프·발코니 사용 ──
+    var _prof=null;
+    if(S.vOn&&S.vPlanes&&S.vPlanes.length){
+      var _vx0=null; S.vPlanes.forEach(function(q){ _vx0=(_vx0===null)?+q.x:Math.min(_vx0,+q.x); });
+      var _pxF=_vx0-2;
+      _prof=S.vPlanes.map(function(q){ return {x0:+q.x-_pxF, x1:+q.x-_pxF+(+q.d), z0:+(q.z0||0), z1:+(q.z1||0)}; })
+                     .sort(function(a,b){ return a.x0-b.x0; });
+    }
+    // find where a ray (downtilt aimDeg) from (ox,oy) first meets venue profile/floor or a canvas edge
+    function rayHit(ox,oy,aimDeg){ var a=aimDeg*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+      var t=1e6;
+      if(_prof){
+        for(var pi=0;pi<_prof.length;pi++){ var sg=_prof[pi];
+          var px0=X(sg.x0),py0=Y(sg.z0),px1=X(sg.x1),py1=Y(sg.z1);
+          var ex=px1-px0,ey=py1-py0, den=c*ey-s*ex;
+          if(Math.abs(den)<1e-6)continue;
+          var tt=((px0-ox)*ey-(py0-oy)*ex)/den;
+          if(tt<=0.5)continue;
+          var hx=ox+c*tt,hy=oy+s*tt;
+          var u=(Math.abs(ex)>Math.abs(ey))?((hx-px0)/ex):((hy-py0)/ey);
+          if(u>=0&&u<=1)t=Math.min(t,tt);
+        }
+        if(s>1e-4)t=Math.min(t,(gY-oy)/s);                            // 면 사이 갭 = 평바닥 0m
+      } else {
+        var x0=X(0),xd=X(S.depth),m=-rake/(xd-x0);
+        var den2=s-m*c; t=Math.abs(den2)>1e-4?((m*(ox-x0)+gY-oy)/den2):1e6; if(t<=0)t=1e6;
+      }
       var tx=c>1e-4?(W-2-ox)/c:1e6, ty=s>1e-4?(H-2-oy)/s:1e6, tup=s<-1e-4?(padT-oy)/s:1e6;
       t=Math.min(t,tx,ty,tup); return {x:ox+c*t,y:oy+s*t}; }
     function cover(ox,oy,a1,a2,col,al){ var p1=rayHit(ox,oy,a1),p2=rayHit(ox,oy,a2);
@@ -865,8 +889,24 @@
     function ray(ox,oy,aimDeg,col,al,lw){ var p=rayHit(ox,oy,aimDeg); x.strokeStyle=col;x.globalAlpha=al;x.lineWidth=lw||1;
       x.beginPath();x.moveTo(ox,oy);x.lineTo(p.x,p.y);x.stroke();x.globalAlpha=1; return p; }
     // floor, ear line, axis
-    x.strokeStyle=line;x.lineWidth=1.2;x.beginPath();x.moveTo(X(0),gY);x.lineTo(X(S.depth),gY-rake);x.stroke();
-    x.strokeStyle=pnl;x.setLineDash([4,4]);x.beginPath();x.moveTo(X(0),Y(1.2));x.lineTo(X(S.depth),Y(1.2)-rake);x.stroke();x.setLineDash([]);
+    if(_prof){
+      // 평바닥(0m) 기준선
+      x.strokeStyle=line;x.globalAlpha=.5;x.lineWidth=1;x.beginPath();x.moveTo(X(0),gY);x.lineTo(X(S.depth),gY);x.stroke();x.globalAlpha=1;
+      // 관객면(램프·발코니): 면 아래 채움 + 상단 모서리 강조 + 1.2m 귀선(대시)
+      _prof.forEach(function(sg){
+        var px0=X(sg.x0),py0=Y(sg.z0),px1=X(sg.x1),py1=Y(sg.z1);
+        x.fillStyle=line;x.globalAlpha=.18;
+        x.beginPath();x.moveTo(px0,py0);x.lineTo(px1,py1);
+        var isBal=(Math.min(sg.z0,sg.z1)>1.5);                         // 발코니: 얇은 슬래브
+        if(isBal){ x.lineTo(px1,py1+6);x.lineTo(px0,py0+6); } else { x.lineTo(px1,gY);x.lineTo(px0,gY); }
+        x.closePath();x.fill();x.globalAlpha=1;
+        x.strokeStyle=line;x.lineWidth=1.4;x.beginPath();x.moveTo(px0,py0);x.lineTo(px1,py1);x.stroke();
+        x.strokeStyle=pnl;x.setLineDash([4,4]);x.beginPath();x.moveTo(px0,Y(sg.z0+1.2));x.lineTo(px1,Y(sg.z1+1.2));x.stroke();x.setLineDash([]);
+      });
+    } else {
+      x.strokeStyle=line;x.lineWidth=1.2;x.beginPath();x.moveTo(X(0),gY);x.lineTo(X(S.depth),gY-rake);x.stroke();
+      x.strokeStyle=pnl;x.setLineDash([4,4]);x.beginPath();x.moveTo(X(0),Y(1.2));x.lineTo(X(S.depth),Y(1.2)-rake);x.stroke();x.setLineDash([]);
+    }
     x.fillStyle=ink2;x.font='10px ui-monospace,monospace';x.textAlign='center';
     var step=Math.max(5,Math.round(S.depth/6/5)*5);
     for(var d=0;d<=S.depth;d+=step)x.fillText(d+'m',X(d),H-15);

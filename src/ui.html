@@ -251,7 +251,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.68</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.69</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -381,6 +381,7 @@
             <label class="f"><span class="flab">통수 <span class="auto" id="fBoxAutoB">auto</span></span><input type="number" id="fBox" min="2" max="16" value="6"></label>
           </div>
           <label class="f" style="margin-top:2px"><span class="flab">방사 각 · 틸트(±) <span class="auto" id="fAimAutoB">auto</span> <span class="fval" id="fAimV">0°</span></span><input type="range" id="fAim" min="-30" max="60" value="0"></label>
+          <label class="f"><span class="flab">설치 높이 <span class="fval"><span id="fHeightV">1.2</span>m</span></span><input type="range" id="fHeight" min="0" max="8" step="0.1" value="1.2"></label>
           <label class="chk" style="margin:2px 0 8px"><input type="checkbox" id="fRot"> 가로 설치(90° 회전) <span class="fval" id="fDispV" style="margin-left:auto"></span></label>
           <div class="hint" id="fHint"></div>
         </div>
@@ -581,7 +582,7 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.68</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.69</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -697,7 +698,7 @@
   var S={preset:'church',efFreq:69,flyMode:'integrated',dDist:22,dDistAuto:true,oMount:'flown',dAlignAuto:true,dAlignMs:60,cHeight:9,cHeightAuto:true,mLink:1,sLink:1,fLink:1,dLink:1,cLink:1,oLink:1,depth:43,width:41,stageW:13,trim:9,spl:102,program:'live',env:'indoor',
     maintype:'auto', mMdl:'KSL',mAmp:'D90',mBox:12,mBoxAuto:true, mTilt:0,mTiltAuto:true, splayAuto:true,splayMax:8, rigPts:'2', mMount:'flown', poleMdl:'km21366',poleH:1100,
     sMdl:'SL-SUB',sAmp:'D90',sBox:6,sBoxAuto:true,sCfg:'stack',subPos:'ground',fSubOn:false,fSubBox:4,fSubAuto:true,
-    fOn:true,fType:'point',fMdl:'E8',fAmp:'D20',fBox:6,fAuto:true,fBoxAuto:true,fAim:0,fAimAuto:true,fRot:false,fRigPts:'2',
+    fOn:true,fType:'point',fMdl:'E8',fAmp:'D20',fBox:6,fHeight:1.2,fAuto:true,fBoxAuto:true,fAim:0,fAimAuto:true,fRot:false,fRigPts:'2',
     dOn:false,dtype:'line',dMdl:'XSL',dAmp:'D40',dBox:8,dAuto:true,dBoxAuto:true,dAim:0,dAimAuto:true, dSplayAuto:true,dSplayMax:8,dRigPts:'2', dMount:'flown', dHeight:7,dHeightAuto:true,
     cOn:false,cType:'auto',cMdl:'V10P',cAmp:'D80',cBox:1,cBoxAuto:true,cAim:0,cAimAuto:true,cRigPts:'2',cSplayAuto:true,cSplayMax:8,
     oOn:false,oType:'auto',oMdl:'Y',oAmp:'D80',oBox:6,oBoxAuto:true,oTilt:0,oTiltAuto:true,oHoriz:0,oRigPts:'2',oSplayAuto:true,oSplayMax:8,
@@ -1009,7 +1010,7 @@
     if(S.fSubOn){ x.globalAlpha=.7; for(var k=0;k<Math.min(Math.ceil(S.fSubBox/2),3);k++){x.fillStyle=vio;x.fillRect(X(Math.max(0.2,1.6+_se.sx))-6,gY-8-k*8,17,7);} x.globalAlpha=1;
       _sfL.push({t:'프론트서브 ×'+S.fSubBox,c:vio}); }
     // front fill — radiation aimed down at front rows
-    if(S.fOn){ var fx=X(Math.max(0.2,0.7+_se.fx)),fy=Y(1.0),fvh=effDisp(S.fMdl,S.fRot)[1]/2;
+    if(S.fOn){ var fx=X(Math.max(0.2,0.7+_se.fx)),fy=Y(Math.max(0.2,(+S.fHeight||1.2))),fvh=effDisp(S.fMdl,S.fRot)[1]/2;
       cover(fx,fy,S.fAim-fvh,S.fAim+fvh,good,0.15);
       ray(fx,fy,S.fAim-fvh,good,0.5,1);ray(fx,fy,S.fAim+fvh,good,0.5,1);ray(fx,fy,S.fAim,good,0.7,1.2);
       x.fillStyle=good;x.fillRect(fx-3,fy-4,8,7); _sfL.push({t:'프론트필 '+S.fMdl+' ×'+S.fBox+' ↓'+S.fAim+'°',c:good}); }
@@ -1683,6 +1684,7 @@
   $('oHoriz').addEventListener('input',function(){S.oHoriz=+this.value;$('oHorizV').textContent=S.oHoriz;render();});
   $('mHoriz').addEventListener('input',function(){S.mHoriz=+this.value;$('mHorizV').textContent=S.mHoriz;render();});
   $('dHoriz').addEventListener('input',function(){S.dHoriz=+this.value;$('dHorizV').textContent=S.dHoriz;render();});
+  $('fHeight').addEventListener('input',function(){S.fHeight=+this.value;$('fHeightV').textContent=S.fHeight;render();});
   $('cHoriz').addEventListener('input',function(){S.cHoriz=+this.value;$('cHorizV').textContent=S.cHoriz;render();});
   $('dMdl').addEventListener('change',function(){S.dMdl=this.value;S.dAmp=byId(S.dtype==='line'?LINE:POINT,S.dMdl).amp;render();});
   $('mAmp').addEventListener('change',function(){S.mAmp=this.value;render();});
@@ -1908,7 +1910,7 @@
     var spec={ projName:pn, ver:pv, date:date,
       main:{type:type, mdl:S.mMdl, box:S.mBox, amp:S.mAmp, link:S.mLink, tilt:S.mTilt, mount:S.mMount, rigPts:S.rigPts, horiz:S.mHoriz, splay:(type==='line'?sa(S.mMdl,S.mBox,S.splayAuto,S.splayMax):[]), variants:(type==='line'&&S.mVar&&variantPair(S.mMdl))?effVarIdx(S.mVar,S.mBox):null},
       sub:{mdl:S.sMdl, box:S.sBox, amp:S.sAmp, link:S.sLink, efFreq:S.efFreq, flyMode:S.flyMode, pos:S.subPos, cfg:S.sCfg, fSubOn:S.fSubOn, fSubBox:S.fSubBox},
-      front:{on:S.fOn, type:S.fType, mdl:S.fMdl, box:S.fBox, amp:S.fAmp, link:S.fLink, aim:S.fAim, rigPts:S.fRigPts, splay:(S.fType==='line'?sa(S.fMdl,S.fBox,true,8):[]), variants:(S.fType==='line'&&S.fVar&&variantPair(S.fMdl))?effVarIdx(S.fVar,S.fBox):null},
+      front:{on:S.fOn, type:S.fType, mdl:S.fMdl, box:S.fBox, amp:S.fAmp, link:S.fLink, aim:S.fAim, rigPts:S.fRigPts, height:S.fHeight, splay:(S.fType==='line'?sa(S.fMdl,S.fBox,true,8):[]), variants:(S.fType==='line'&&S.fVar&&variantPair(S.fMdl))?effVarIdx(S.fVar,S.fBox):null},
       delay:{on:S.dOn, type:S.dtype, mdl:S.dMdl, box:S.dBox, amp:S.dAmp, link:S.dLink, horiz:S.dHoriz, dist:S.dDist, alignMs:(S.dAlignAuto?null:S.dAlignMs), aim:S.dAim, mount:S.dMount, rigPts:S.dRigPts, height:S.dHeight, splay:(S.dtype==='line'?sa(S.dMdl,S.dBox,S.dSplayAuto,S.dSplayMax):[]), variants:(S.dtype==='line'&&S.dVar&&variantPair(S.dMdl))?effVarIdx(S.dVar,S.dBox):null},
       center:{on:S.cOn, type:cTypeEff(), mdl:S.cMdl, box:S.cBox, amp:S.cAmp, link:S.cLink, horiz:S.cHoriz, height:S.cHeight, aim:S.cAim, rigPts:S.cRigPts, splay:(cTypeEff()==='line'?sa(S.cMdl,S.cBox,S.cSplayAuto,S.cSplayMax):[]), variants:(cTypeEff()==='line'&&S.cVar&&variantPair(S.cMdl))?effVarIdx(S.cVar,S.cBox):null},
       out:{on:S.oOn, type:oTypeEff(), mdl:S.oMdl, box:S.oBox, amp:S.oAmp, link:S.oLink, mount:S.oMount, tilt:S.oTilt, horiz:S.oHoriz, rigPts:S.oRigPts, splay:(oTypeEff()==='line'?sa(S.oMdl,S.oBox,S.oSplayAuto,S.oSplayMax):[]), variants:(oTypeEff()==='line'&&S.oVar&&variantPair(S.oMdl))?effVarIdx(S.oVar,S.oBox):null} };
@@ -2018,11 +2020,11 @@
   // ── 설정 저장/불러오기 ── 저장된 상태(S)를 모든 컨트롤에 복원
   function syncUI(){
     if(S.preset==='youngin')S.preset='church';  // 구버전 설정 호환
-    ['depth','width','stageW','trim','spl','program','preset','mMdl','mAmp','mBox','mTilt','splayMax','mHoriz','sMdl','sAmp','sBox','subPos','sCfg','fSubBox','fMdl','fAmp','fBox','fAim','dMdl','dAmp','dBox','dAim','dSplayMax','dHeight','cMdl','cAmp','cBox','cAim','cSplayMax','oMdl','oAmp','oBox','oTilt','oSplayMax','oHoriz','dHoriz','cHoriz'].forEach(function(id){
+    ['depth','width','stageW','trim','spl','program','preset','mMdl','mAmp','mBox','mTilt','splayMax','mHoriz','sMdl','sAmp','sBox','subPos','sCfg','fSubBox','fMdl','fAmp','fBox','fAim','dMdl','dAmp','dBox','dAim','dSplayMax','dHeight','cMdl','cAmp','cBox','cAim','cSplayMax','oMdl','oAmp','oBox','oTilt','oSplayMax','oHoriz','dHoriz','cHoriz','fHeight'].forEach(function(id){
       var el=$(id); if(el && S[id]!==undefined && S[id]!==null) el.value=S[id];
     });
     $('projName').value=S.projName||''; updVerBadge();
-    var _dhv=$('dHorizV'); if(_dhv)_dhv.textContent=S.dHoriz||0; var _chv=$('cHorizV'); if(_chv)_chv.textContent=S.cHoriz||0;
+    var _dhv=$('dHorizV'); if(_dhv)_dhv.textContent=S.dHoriz||0; var _chv=$('cHorizV'); if(_chv)_chv.textContent=S.cHoriz||0; var _fhv=$('fHeightV'); if(_fhv)_fhv.textContent=S.fHeight||1.2;
     if(!Array.isArray(S.customs))S.customs=[]; if(window.__cuRebuild)window.__cuRebuild();
     ['fOn','dOn','cOn','oOn','fSubOn','fRot'].forEach(function(id){ var el=$(id); if(el) el.checked=!!S[id]; });
     ['env','maintype','dtype','rigPts','fRigPts','dRigPts','cRigPts','oRigPts','mMount','dMount','oMount','cType','oType','fType'].forEach(function(id){
@@ -2257,10 +2259,10 @@
              if(nb%2) push({label:'S',part:'sub',x:xS,y:0,bx:xS,by:ySb,z0:0,z1:0,c:'#a855f7',kind:'sub'}); }
       if(S.fSubOn){ var fn=num(S.fSubBox,4), hw0=Math.max(2,ySb*0.7);
         for(var i2=0;i2<fn;i2++){ var yy=(fn>1?(-1+2*i2/(fn-1)):0)*hw0; push({label:'fS',part:null,x:xS+0.6,y:yy,z0:0,z1:0,c:'#a855f7',kind:'sub'}); } }
-      if(S.fOn){ var fx0=op('front','x',null), fy0=op('front','y',0);
-        if(S.fType==='line'){ push({label:'F',part:'front',x:(fx0===null?0:fx0),y:fy0,bx:(fx0===null?0:fx0),by:fy0,z0:2.5,z1:0.3,c:'#22c55e',kind:'front',g:{type:'line',n:num(S.fBox,6),ch:famH(S.fMdl),tilt:num(S.fAim,0),horiz:0,mount:'flown',mdl:S.fMdl,la:laData(S.fMdl,num(S.fBox,6),num(S.fAim,0),'flown',true,8,'2',S.fVar),hd:90}}); }
+      if(S.fOn){ var fx0=op('front','x',null), fy0=op('front','y',0), fH0=num(S.fHeight,(S.fType==='line'?2.5:1.2));
+        if(S.fType==='line'){ push({label:'F',part:'front',x:(fx0===null?0:fx0),y:fy0,bx:(fx0===null?0:fx0),by:fy0,z0:fH0,z1:Math.max(0.2,fH0-num(S.fBox,6)*famH(S.fMdl)),c:'#22c55e',kind:'front',g:{type:'line',n:num(S.fBox,6),ch:famH(S.fMdl),tilt:num(S.fAim,0),horiz:0,mount:'flown',mdl:S.fMdl,la:laData(S.fMdl,num(S.fBox,6),num(S.fAim,0),'flown',true,8,'2',S.fVar),hd:90}}); }
         else { var fb=num(S.fBox,6), hwf=Math.max(2,(num(S.stageW,12)/2)-0.5), fxx=(fx0===null?xF:fx0);
-          for(var j=0;j<fb;j++){ var yf=fy0+(fb>1?(-1+2*j/(fb-1)):0)*hwf; push({label:'F',part:'front',x:fxx,y:yf,bx:fxx,by:fy0,z0:1.2,z1:1.2,c:'#22c55e',kind:'front',g:{type:'point',n:1,ch:0.25,tilt:-Math.abs(num(S.fAim,0)||30),horiz:0,mdl:S.fMdl,hd:pdisp(S.fMdl)[0],vd:pdisp(S.fMdl)[1]}}); } } }
+          for(var j=0;j<fb;j++){ var yf=fy0+(fb>1?(-1+2*j/(fb-1)):0)*hwf; push({label:'F',part:'front',x:fxx,y:yf,bx:fxx,by:fy0,z0:fH0,z1:fH0,c:'#22c55e',kind:'front',g:{type:'point',n:1,ch:0.25,tilt:-Math.abs(num(S.fAim,0)||30),horiz:0,mdl:S.fMdl,hd:pdisp(S.fMdl)[0],vd:pdisp(S.fMdl)[1]}}); } } }
       if(S.dOn){ var dh=num(S.dHeight,3), xDd=(xDl===null)?Math.round((xF+num(S.dDist,22))*10)/10:xDl;
         var dG={type:(S.dtype==='line'?'line':'point'),n:num(S.dBox,6),ch:famH(S.dMdl),tilt:num(S.dAim,0),horiz:num(S.dHoriz,0),mount:S.dMount,mdl:S.dMdl,la:(S.dtype==='line'?laData(S.dMdl,num(S.dBox,6),num(S.dAim,0),S.dMount,S.dSplayAuto,S.dSplayMax,S.dRigPts,S.dVar):null),hd:(S.dtype==='line'?90:pdisp(S.dMdl)[0]),vd:(S.dtype==='line'?0:pdisp(S.dMdl)[1])};
         var dBoxH=(S.dtype==='line'?dG.n*dG.ch:0.4);
@@ -2412,6 +2414,14 @@
           if(c0>1e-4&&(W-padR-x0)/c0<t){ t=(W-padR-x0)/c0; if(t<1e5&&false)landed=false; }
           if(t<0||t>1e5){ t=(W-padR-x0)/Math.max(Math.abs(c0),0.05); landed=false; }
           var p=[x0+c0*t,y0+s0*t]; p.landed=landed; return p; }
+        function veTag(txt,x0,y0,col){                                   // 종단면 tag()식 칩
+          x.font='700 8.5px ui-monospace,monospace';
+          var w2=x.measureText(txt).width+10;
+          var bx0=Math.min(Math.max(x0,padL),W-padR-w2);
+          x.fillStyle=css('--panel-2','#0e1526');x.globalAlpha=.88;
+          x.beginPath();x.roundRect?x.roundRect(bx0-2,y0-9,w2,13,4):x.rect(bx0-2,y0-9,w2,13);x.fill();x.globalAlpha=1;
+          x.fillStyle=col;x.textAlign='left';x.fillText(txt,bx0+3,y0+1);
+        }
         function landDot(p,col,lblKey){                                  // 착지점 도트 + 거리 라벨(종단면식)
           if(!p||!p.landed)return;
           x.fillStyle=col;x.beginPath();x.arc(p[0],p[1],3,0,7);x.fill();
@@ -2421,33 +2431,38 @@
             x.fillStyle=col;x.globalAlpha=.85;x.font='8.5px ui-monospace,monospace';x.textAlign='center';
             x.fillText(mtr+'m',p[0],p[1]+13);x.globalAlpha=1; } }
         if(g&&g.type==='line'&&g.la&&typeof laCab==='function'){
-          // 종단면과 동일: laCab 사다리꼴 웨지 체인(전면 힌지·C자 커브), 통별 각도=flownAims/stackAims
+          // 종단면과 동일: laCab 웨지 체인 + '통마다' 전면에서 각도별 레이 방사(엣지 강조)
           var n=Math.max(1,Math.min(g.n||1,30));
           var fhpx=Math.max(2.5,g.ch*sz), dep=Math.min(fhpx*1.7,26);
           var stack=(g.mount==='stack');
           var edge2=css('--line-2','#26314a'), v12c=css('--v12','#8ab8f7');
           var vp2=(typeof variantPair==='function')?variantPair(g.mdl):null;
-          // 커버리지(방사각): 상단·하단 에임 → 바닥, 종단면과 동일 의미
+          // 커버 웨지(종단면 cover와 동일): 어레이 앵커에서 상·하단 에임
           var aT0=g.la.aims[0], aB0=g.la.aims[n-1];
-          var cvA=stack?[px,Zy(s.z1)]:[px+2,Zy(s.z0)], cvB=stack?[px,Zy(s.z0)]:[px+2,Zy(s.z1)];
-          var pA=sray(cvA[0],cvA[1],aT0), pB=sray(cvB[0],cvB[1],aB0);
-          x.fillStyle=s.c;x.globalAlpha=0.07;
-          x.beginPath();x.moveTo(cvA[0],cvA[1]);x.lineTo(pA[0],pA[1]);x.lineTo(pB[0],pB[1]);x.lineTo(cvB[0],cvB[1]);x.closePath();x.fill();
-          x.globalAlpha=0.35;x.strokeStyle=s.c;x.lineWidth=1;
-          x.beginPath();x.moveTo(cvA[0],cvA[1]);x.lineTo(pA[0],pA[1]);x.stroke();
-          x.beginPath();x.moveTo(cvB[0],cvB[1]);x.lineTo(pB[0],pB[1]);x.stroke();x.globalAlpha=1;
-          landDot(pA,s.c,'LA'+s.label+Math.round(pA[0]));                 // 상단 에임 착지
-          landDot(pB,s.c,'LB'+s.label+Math.round(pB[0]));                 // 하단 에임 착지
+          var anch=stack?[px+1,(Zy(s.z0)+Zy(s.z1))/2]:[px+1,Zy(s.z0)];
+          var pA=sray(anch[0],anch[1],stack?aB0:aT0), pB=sray(anch[0],anch[1],stack?aT0:aB0);
+          x.fillStyle=s.c;x.globalAlpha=0.09;
+          x.beginPath();x.moveTo(anch[0],anch[1]);x.lineTo(pA[0],pA[1]);x.lineTo(pB[0],pB[1]);x.closePath();x.fill();x.globalAlpha=1;
+          // 웨지 체인 + 통별 레이: 각 통 전면 중점 → 그 통의 조준각 (종단면 ray()와 동일 스타일)
           var fp=stack?[px,Zy(s.z1)]:[px,Zy(s.z0)];
-          for(var ci=0;ci<n;ci++){ var bcol=(g.la.vars&&vp2&&g.la.vars[ci]===vp2[1])?v12c:s.c;
-            fp=laCab(x,fp[0],fp[1],fhpx,dep,g.la.aims[ci],stack?-1:1,bcol,edge2); }
-          // 상·하단 지향각 라벨(종단면과 동일 의미)
+          var firstP=null,lastP=null;
+          for(var ci=0;ci<n;ci++){
+            var bcol=(g.la.vars&&vp2&&g.la.vars[ci]===vp2[1])?v12c:s.c;
+            var edge=(ci===0||ci===n-1);
+            var rx0=fp[0]+1, ry0=fp[1]+(stack?-1:1)*fhpx/2;
+            var pr=sray(rx0,ry0,g.la.aims[ci]);
+            x.strokeStyle=bcol;x.globalAlpha=edge?0.55:0.2;x.lineWidth=edge?1.3:1;
+            x.beginPath();x.moveTo(rx0,ry0);x.lineTo(pr[0],pr[1]);x.stroke();x.globalAlpha=1;
+            if(ci===0)firstP=pr; if(ci===n-1)lastP=pr;
+            fp=laCab(x,fp[0],fp[1],fhpx,dep,g.la.aims[ci],stack?-1:1,bcol,edge2);
+          }
+          landDot(firstP,s.c,'LA'+s.label+Math.round(firstP[0]));          // 첫 통 착지
+          landDot(lastP,s.c,'LB'+s.label+Math.round(lastP[0]));            // 끝 통 착지
+          // 상·하단 지향각 태그(종단면 칩 스타일)
           var aT=g.la.aims[0], aB=g.la.aims[n-1];
           function fmtA(a){ return (a<-0.4?(-a).toFixed(0)+'°↑':a.toFixed(0)+'°↓'); }
-          x.font='700 8.5px ui-monospace,monospace'; x.fillStyle=s.c; x.globalAlpha=.95; x.textAlign='left';
-          if(stack){ x.fillText('상단 '+fmtA(aB),fp[0]+5,fp[1]-2); x.fillText('하단 '+fmtA(aT),px+5,Zy(s.z1)+10); }
-          else { x.fillText('상단 '+fmtA(aT),px+5,Zy(s.z0)-3); x.fillText('하단 '+fmtA(aB),fp[0]+5,fp[1]+9); }
-          x.globalAlpha=1;
+          if(stack){ veTag('상단 '+fmtA(aB),fp[0]+5,fp[1]-4,s.c); veTag('하단 '+fmtA(aT),px+5,Zy(s.z1)+12,s.c); }
+          else { veTag('상단 '+fmtA(aT),px+5,Zy(s.z0)-5,s.c); veTag('하단 '+fmtA(aB),fp[0]+5,fp[1]+12,s.c); }
                 } else if(g&&g.type==='point'){
           var pz0=Zy(s.z0); 
           if(g.vd){ var vh=g.vd/2, pA2=sray(px+3,pz0,-(g.tilt)-vh+0), pB2=sray(px+3,pz0,-(g.tilt)+vh);
@@ -2523,7 +2538,7 @@
       var P=[];
       P.push({part:'main',nm:'메인',c:'#1877F2',on:true,dx:xF,dy:yM,mir:true,z:trim,zk:'trim',hk:'mHoriz'});
       P.push({part:'sub',nm:'서브',c:'#a855f7',on:!!(S.sMdl&&num(S.sBox,0)>0),dx:xF,dy:yM,mir:true,z:(S.subPos==='flown'?trim-0.5:0),zk:null,fixed:subFixed});
-      P.push({part:'front',nm:'프론트필',c:'#22c55e',on:!!S.fOn,dx:(S.fType==='line'?0:xF),dy:0,mir:false,z:(S.fType==='line'?2.5:1.2),zk:null});
+      P.push({part:'front',nm:'프론트필',c:'#22c55e',on:!!S.fOn,dx:(S.fType==='line'?0:xF),dy:0,mir:false,z:num(S.fHeight,(S.fType==='line'?2.5:1.2)),zk:'fHeight'});
       P.push({part:'delay',nm:'딜레이',c:'#eab308',on:!!S.dOn,dx:Math.round((xF+num(S.dDist,22))*10)/10,dy:yM,mir:true,z:num(S.dHeight,3),zk:'dHeight',hk:'dHoriz'});
       P.push({part:'center',nm:'센터',c:'#f472b6',on:!!S.cOn,dx:xF,dy:0,mir:false,z:num(S.cHeight,trim),zk:'cHeight',hk:'cHoriz'});
       P.push({part:'out',nm:'아웃',c:'#38bdf8',on:!!S.oOn,dx:xF,dy:yO,mir:true,z:trim-0.5,zk:null,hk:'oHoriz'});
@@ -2608,7 +2623,7 @@
       var cv=document.getElementById(id); if(!cv)return;
       cv.style.touchAction='none';
       cv.addEventListener('pointerdown',function(e){ var m=relPos(cv,e),b=hit(m);
-        if(b){ if(b.mode==='spk'){ veDrag={mode:'spk',part:b.part,mx:m.x,my:m.y,cv:cv,plan:isPlan,o:{bx:b.bx,by:b.by,xF:b.xF,cz:b.cz,trim:num(S.trim,9),dh:num(S.dHeight,3),ch:num(S.cHeight,9)}}; cv.style.cursor='grabbing'; e.preventDefault(); return; }
+        if(b){ if(b.mode==='spk'){ veDrag={mode:'spk',part:b.part,mx:m.x,my:m.y,cv:cv,plan:isPlan,o:{bx:b.bx,by:b.by,xF:b.xF,cz:b.cz,trim:num(S.trim,9),dh:num(S.dHeight,3),ch:num(S.cHeight,9),fh2:num(S.fHeight,1.2)}}; cv.style.cursor='grabbing'; e.preventDefault(); return; }
           veSel=b.i; veDrag={mode:b.mode,mx:m.x,my:m.y,cv:cv,o:JSON.parse(JSON.stringify(S.vPlanes[b.i])),plan:isPlan}; if(b.mode==='move'||b.mode==='smove')cv.style.cursor='grabbing'; redraw(); e.preventDefault(); }
       });
       window.addEventListener('pointermove',function(e){ if(!veDrag||veDrag.cv!==cv)return; var m=relPos(cv,e); var q=S.vPlanes[veSel],o=veDrag.o; if(!q)return; e.preventDefault&&e.cancelable&&e.preventDefault();
@@ -2637,6 +2652,7 @@
             if(pt2==='main'){ S.trim=Math.max(2,Math.min(30,zsnap(o2.trim+dzs2))); var tE=$('trim'); if(tE)tE.value=S.trim; var tV=$('trimV'); if(tV)tV.textContent=S.trim; }
             else if(pt2==='delay'){ S.dHeight=Math.max(1,Math.min(20,zsnap(o2.dh+dzs2))); S.dHeightAuto=false; var dE=$('dHeight'); if(dE)dE.value=S.dHeight; }
             else if(pt2==='center'){ S.cHeight=Math.max(1,Math.min(30,zsnap(o2.ch+dzs2))); S.cHeightAuto=false; var cE=$('cHeight'); if(cE)cE.value=S.cHeight; }
+            else if(pt2==='front'){ S.fHeight=Math.max(0,Math.min(8,zsnap((o2.fh2!==undefined?o2.fh2:1.2)+dzs2))); var fE2=$('fHeight'); if(fE2)fE2.value=S.fHeight; var fV2=$('fHeightV'); if(fV2)fV2.textContent=S.fHeight; }
           }
           redraw(); return;
         }
@@ -2807,6 +2823,7 @@
           if(k==='z'){ if(part==='main'){S.trim=Math.max(2,Math.min(30,v)); var tE=$('trim'); if(tE)tE.value=S.trim; var tV=$('trimV'); if(tV)tV.textContent=S.trim;}
             else if(part==='delay'){S.dHeight=Math.max(1,Math.min(20,v)); S.dHeightAuto=false; var dE=$('dHeight'); if(dE)dE.value=S.dHeight;}
             else if(part==='center'){S.cHeight=Math.max(1,Math.min(30,v)); S.cHeightAuto=false; var cE=$('cHeight'); if(cE)cE.value=S.cHeight;}
+            else if(part==='front'){S.fHeight=Math.max(0,Math.min(8,v)); var fE=$('fHeight'); if(fE)fE.value=S.fHeight; var fV=$('fHeightV'); if(fV)fV.textContent=S.fHeight;}
             veSync(); drawPlan(); drawSide(); return; }
           var cur=S.spkPos[part]||{}; var eff=veSpkParts().filter(function(p){return p.part===part;})[0];
           S.spkPos[part]={x:(k==='x')?v:((cur.x!==undefined)?cur.x:eff.dx), y:(k==='y')?Math.abs(eff&&eff.mir?v:0)||v:((cur.y!==undefined)?cur.y:eff.dy)};

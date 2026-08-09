@@ -766,10 +766,10 @@ def build(spec,outpath):
             hw=R(max(2.0,float(_stw)/2.0-0.5),1) if _stw else R(y_main*0.8,1)   # 립 포지션: 무대폭 기준
             ys=[R(-hw+2*hw*i/(nb-1),2) for i in range(nb)] if nb>1 else [0.0]
             faim=-(abs(f.get('aim',0)) or 30)                       # 앞줄 향해 하향
-            b.point_row('Front fill',psys,f.get('amp','D20'),pid,[R(_y+yFf,2) for _y in ys],1.2,faim,(xFf if xFf is not None else x_front),sym=1,link=f.get('link',1))
+            b.point_row('Front fill',psys,f.get('amp','D20'),pid,[R(_y+yFf,2) for _y in ys],R(float(f.get('height') or 1.2),2),faim,(xFf if xFf is not None else x_front),sym=1,link=f.get('link',1))
         elif f.get('type')=='line' and fm in LINE:
             nb=int(f.get('box',6)); nm=LINE[fm]; bx=apply_manual_variants(variants(nb,*nm),nm,f.get('variants'))
-            b.line_array('Front fill',fm,f.get('amp','D80'),yFf,2.5,f.get('aim',0),bx,f.get('splay') or [0]*nb,ox=(xFf if xFf is not None else 0),link=f.get('link',1),rigpts=f.get('rigPts','2'))
+            b.line_array('Front fill',fm,f.get('amp','D80'),yFf,R(float(f.get('height') or 2.5),2),f.get('aim',0),bx,f.get('splay') or [0]*nb,ox=(xFf if xFf is not None else 0),link=f.get('link',1),rigpts=f.get('rigPts','2'))
         else: warnings.append(f"프론트필 {fm} 미보유→건너뜀")
     d=spec.get('delay',{})
     if d.get('on'):

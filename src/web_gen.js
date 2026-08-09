@@ -686,10 +686,10 @@ function build(db,spec){
       var hw=_stw?R(Math.max(2.0,(+_stw)/2.0-0.5),1):R(yM*0.8,1);var ys=[];
       if(nb2>1){for(var i2=0;i2<nb2;i2++)ys.push(R(-hw+2*hw*i2/(nb2-1),2));}else ys=[0];
       var faim=-(Math.abs(+(f.aim||0))||30);
-      b.pointRow('Front fill',psys,f.amp||'D20',pid,ys.map(function(_y){return R(_y+yFf,2);}),1.2,faim,(xFf!==null?xFf:xF),1,f.link||1);
+      b.pointRow('Front fill',psys,f.amp||'D20',pid,ys.map(function(_y){return R(_y+yFf,2);}),R(+(f.height||1.2),2),faim,(xFf!==null?xFf:xF),1,f.link||1);
     }else if(f.type==='line'&&LINE[fm2]){
       var nb3=Math.trunc(+(f.box||6));var bx3=applyManualVariants(variants(nb3,LINE[fm2]),LINE[fm2],f.variants);
-      b.lineArray('Front fill',fm2,f.amp||'D80',yFf,2.5,f.aim||0,bx3,f.splay||Array(nb3).fill(0),'flown',(xFf!==null?xFf:0),0,null,0,0,null,f.link||1,0.3,null,f.rigPts||'2');
+      b.lineArray('Front fill',fm2,f.amp||'D80',yFf,R(+(f.height||2.5),2),f.aim||0,bx3,f.splay||Array(nb3).fill(0),'flown',(xFf!==null?xFf:0),0,null,0,0,null,f.link||1,0.3,null,f.rigPts||'2');
     }else warn('프론트필 '+fm2+' 미보유→건너뜀');
   }
   var d=spec.delay||{};

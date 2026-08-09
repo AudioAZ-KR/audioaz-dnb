@@ -199,7 +199,7 @@
 #veModal .vetr input:focus{border-color:var(--brand);outline:none}
 #veModal .vetr input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 #veModal .vetr button[data-del]{background:none;border:none;color:var(--crit);cursor:pointer;font-size:14px;padding:0;line-height:1}
-#veModal .vesph,#veModal .vespr{display:grid;grid-template-columns:1.1fr .9fr .9fr .9fr .62fr 22px;gap:3px;align-items:center;padding:2px}
+#veModal .vesph,#veModal .vespr{display:grid;grid-template-columns:1.05fr .85fr .85fr .85fr .8fr .58fr 22px;gap:3px;align-items:center;padding:2px}
 #veModal .vesph{font-size:9px;color:var(--ink-3);font-family:var(--mono)}
 #veModal .vesph span{text-align:center}
 #veModal .vespr{border-radius:6px;margin-bottom:2px}
@@ -248,7 +248,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.65</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.66</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -269,8 +269,8 @@
   <div class="app">
     <form class="card" id="cfg" aria-label="시스템 구성">
         <div id="cfgTabs" role="tablist" aria-label="파트 선택">
-          <button type="button" data-pane="venue" class="on"><span class="tdot" style="background:var(--brand)"></span>베뉴</button>
-          <button type="button" data-pane="main" id="ctabMain"><span class="tdot" style="background:var(--accent)"></span>메인</button>
+          <button type="button" id="veOpenTab" style="border-color:var(--brand);color:#fff;background:var(--brand);font-weight:700">🗺 베뉴 편집기</button>
+          <button type="button" data-pane="main" id="ctabMain" class="on"><span class="tdot" style="background:var(--accent)"></span>메인</button>
           <button type="button" data-pane="sub" id="ctabSub"><span class="tdot" style="background:var(--violet)"></span>서브</button>
           <button type="button" data-pane="front" id="ctabFront"><span class="tdot" style="background:var(--good)"></span>프론트필</button>
           <button type="button" data-pane="delay" id="ctabDelay"><span class="tdot" style="background:var(--warn)"></span>딜레이</button>
@@ -279,7 +279,7 @@
           <span id="cuTabs"></span>
           <button type="button" id="ctabAdd" title="커스텀 스피커 추가" style="font-weight:800;color:var(--brand);border-color:var(--brand)">＋</button>
         </div>
-      <div class="grp" data-pane="venue">
+      <div class="grp">
         <h2><span class="l"><span class="dot" style="background:var(--ink-3)"></span>베뉴 · 목표</span></h2>
         <label class="f"><span class="flab">프리셋</span>
           <select id="preset">
@@ -306,7 +306,7 @@
         </div>
       </div>
 
-      <div class="grp" data-pane="venue" id="venueGrp">
+      <div class="grp" data-pane="_venuehidden" id="venueGrp" style="display:none">
         <h2><span class="l"><span class="dot" style="background:var(--brand)"></span>베뉴 도면</span>
           <input type="checkbox" id="vOn" style="display:none"> <button type="button" class="themebtn" id="veOpenBtn" style="font-size:11px;padding:3px 10px;border-color:var(--brand);color:var(--brand)">🗺 편집기 열기</button></h2>
         <div id="vBody" style="display:none">
@@ -402,7 +402,8 @@
           <label class="f" style="margin-top:2px"><span class="flab"><span id="dAimLab">조준 · 다운틸트</span> <span class="auto" id="dAimAutoB">auto</span> <span class="fval"><span id="dAimV">0</span>°↓</span></span><input type="range" id="dAim" min="-4" max="24" step="2" value="0"></label>
           <label class="f" id="dSplayRow"><span class="flab">스플레이 · 하단 최대 <span class="auto" id="dSplayAutoB">auto</span> <span class="fval"><span id="dSplayMaxV">8</span>°</span></span><input type="range" id="dSplayMax" min="0" max="10" step="1" value="8"></label>
           <label class="f" id="dRigPtsRow"><span class="flab">리깅 포인트</span>
-            <div class="seg" id="dRigPts" role="group" aria-label="딜레이 리깅 포인트"><button type="button" data-v="2" aria-pressed="true">2점<span class="s">2 motors</span></button><button type="button" data-v="1" aria-pressed="false">1점<span class="s">1 motor</span></button></div></label>
+            <label class="f"><span class="flab">좌우 방향 · 토우(안쪽 +) <span class="fval"><span id="dHorizV">0</span>°</span></span><input type="range" id="dHoriz" min="-20" max="20" step="1" value="0"></label>
+          <div class="seg" id="dRigPts" role="group" aria-label="딜레이 리깅 포인트"><button type="button" data-v="2" aria-pressed="true">2점<span class="s">2 motors</span></button><button type="button" data-v="1" aria-pressed="false">1점<span class="s">1 motor</span></button></div></label>
           <div class="hint" id="dHint"></div>
         </div>
       </div>
@@ -421,7 +422,8 @@
           <label class="f"><span class="flab">센터 트림 높이 <span class="auto" id="cHeightAutoB">auto</span> <span class="fval"><span id="cHeightV">9</span>m</span></span><input type="range" id="cHeight" min="3" max="16" step="0.5" value="9"></label>
           <label class="f" style="margin-top:2px"><span class="flab">조준 · 다운틸트 <span class="auto" id="cAimAutoB">auto</span> <span class="fval"><span id="cAimV">0</span>°↓</span></span><input type="range" id="cAim" min="-4" max="24" step="2" value="0"></label>
           <label class="f" id="cSplayRow"><span class="flab">스플레이 · 하단 최대 <span class="auto" id="cSplayAutoB">auto</span> <span class="fval"><span id="cSplayMaxV">8</span>°</span></span><input type="range" id="cSplayMax" min="0" max="10" step="1" value="8"></label>
-          <label class="f" id="cRigPtsRow"><span class="flab">리깅 포인트</span><div class="seg" id="cRigPts" role="group" aria-label="센터필 리깅"><button type="button" data-v="2" aria-pressed="true">2점<span class="s">2 motors</span></button><button type="button" data-v="1" aria-pressed="false">1점<span class="s">1 motor</span></button></div></label>
+          <label class="f" id="cRigPtsRow"><span class="flab">리깅 포인트</span><label class="f"><span class="flab">좌우 조준(우측 +) <span class="fval"><span id="cHorizV">0</span>°</span></span><input type="range" id="cHoriz" min="-30" max="30" step="1" value="0"></label>
+          <div class="seg" id="cRigPts" role="group" aria-label="센터필 리깅"><button type="button" data-v="2" aria-pressed="true">2점<span class="s">2 motors</span></button><button type="button" data-v="1" aria-pressed="false">1점<span class="s">1 motor</span></button></div></label>
           <div class="hint" id="cHint"></div>
         </div>
       </div>
@@ -576,7 +578,7 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.65</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.66</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -696,7 +698,7 @@
     dOn:false,dtype:'line',dMdl:'XSL',dAmp:'D40',dBox:8,dAuto:true,dBoxAuto:true,dAim:0,dAimAuto:true, dSplayAuto:true,dSplayMax:8,dRigPts:'2', dMount:'flown', dHeight:7,dHeightAuto:true,
     cOn:false,cType:'auto',cMdl:'V10P',cAmp:'D80',cBox:1,cBoxAuto:true,cAim:0,cAimAuto:true,cRigPts:'2',cSplayAuto:true,cSplayMax:8,
     oOn:false,oType:'auto',oMdl:'Y',oAmp:'D80',oBox:6,oBoxAuto:true,oTilt:0,oTiltAuto:true,oHoriz:0,oRigPts:'2',oSplayAuto:true,oSplayMax:8,
-    projName:'',projVer:'v.1', mHoriz:0, vOn:false, vPlanes:[], spkPos:{}, customs:[], mVar:null, dVar:null, cVar:null, oVar:null, fVar:null};
+    projName:'',projVer:'v.1', mHoriz:0, dHoriz:0, cHoriz:0, vOn:false, vPlanes:[], spkPos:{}, customs:[], mVar:null, dVar:null, cVar:null, oVar:null, fVar:null};
   function autoTilt(){ return 0; } // 기본 디폴트 틸트 0° — 실제 조준각은 ArrayCalc에서
   // 스택: 바닥 캐비닛 베이스 각도 = d&b 홀그리드 −7/−3.5/0/+3.5/+7° 이산값(V-Series 리깅 매뉴얼). 플라잉: 2°/홀
   var STACK_GRID=[-7,-3.5,0,3.5,7];
@@ -1095,7 +1097,7 @@
         chip(x,bx,by+11,''+(i+1),good,'c',8.5); } }   // 인덱스를 팬 시작 아래로(무대바 겹침 방지)
     // CENTER FILL — center, flying, single point
     if(S.cOn){ var cfh=(cTypeEff()==='line')?90:disp(S.cMdl)[0];
-      fan(mapX(cxw(_pe.cy)),mapY(cy2(0.6+_pe.cx)),0,cfh/2,cfill,Lm*0.85,0.08); x.fillStyle=cfill;x.fillRect(mapX(cxw(_pe.cy))-4,mapY(cy2(0.6+_pe.cx))-3,8,7); }
+      fan(mapX(cxw(_pe.cy)),mapY(cy2(0.6+_pe.cx)),(S.cHoriz||0),cfh/2,cfill,Lm*0.85,0.08); x.fillStyle=cfill;x.fillRect(mapX(cxw(_pe.cy))-4,mapY(cy2(0.6+_pe.cx))-3,8,7); }
     // OUT FILL — outer sides beyond mains, toed-in
     if(S.oOn){ var ofh=(oTypeEff()==='line')?90:disp(S.oMdl)[0];
       fan(mapX(-cxw(_pe.oy)),mapY(cy2(0.7+_pe.ox)), S.oHoriz,ofh/2,ofill,Lm,0.07); x.fillStyle=ofill;x.fillRect(mapX(-cxw(_pe.oy))-4,mapY(cy2(0.7+_pe.ox))-3,8,7);
@@ -1637,6 +1639,8 @@
   $('oTilt').addEventListener('input',function(){S.oTilt=+this.value;S.oTiltAuto=false;$('oTiltV').textContent=S.oTilt;render();});
   $('oHoriz').addEventListener('input',function(){S.oHoriz=+this.value;$('oHorizV').textContent=S.oHoriz;render();});
   $('mHoriz').addEventListener('input',function(){S.mHoriz=+this.value;$('mHorizV').textContent=S.mHoriz;render();});
+  $('dHoriz').addEventListener('input',function(){S.dHoriz=+this.value;$('dHorizV').textContent=S.dHoriz;render();});
+  $('cHoriz').addEventListener('input',function(){S.cHoriz=+this.value;$('cHorizV').textContent=S.cHoriz;render();});
   $('dMdl').addEventListener('change',function(){S.dMdl=this.value;S.dAmp=byId(S.dtype==='line'?LINE:POINT,S.dMdl).amp;render();});
   $('mAmp').addEventListener('change',function(){S.mAmp=this.value;render();});
   $('sAmp').addEventListener('change',function(){S.sAmp=this.value;render();});
@@ -1862,8 +1866,8 @@
       main:{type:type, mdl:S.mMdl, box:S.mBox, amp:S.mAmp, link:S.mLink, tilt:S.mTilt, mount:S.mMount, rigPts:S.rigPts, horiz:S.mHoriz, splay:(type==='line'?sa(S.mMdl,S.mBox,S.splayAuto,S.splayMax):[]), variants:(type==='line'&&S.mVar&&variantPair(S.mMdl))?effVarIdx(S.mVar,S.mBox):null},
       sub:{mdl:S.sMdl, box:S.sBox, amp:S.sAmp, link:S.sLink, efFreq:S.efFreq, flyMode:S.flyMode, pos:S.subPos, cfg:S.sCfg, fSubOn:S.fSubOn, fSubBox:S.fSubBox},
       front:{on:S.fOn, type:S.fType, mdl:S.fMdl, box:S.fBox, amp:S.fAmp, link:S.fLink, aim:S.fAim, rigPts:S.fRigPts, splay:(S.fType==='line'?sa(S.fMdl,S.fBox,true,8):[]), variants:(S.fType==='line'&&S.fVar&&variantPair(S.fMdl))?effVarIdx(S.fVar,S.fBox):null},
-      delay:{on:S.dOn, type:S.dtype, mdl:S.dMdl, box:S.dBox, amp:S.dAmp, link:S.dLink, dist:S.dDist, alignMs:(S.dAlignAuto?null:S.dAlignMs), aim:S.dAim, mount:S.dMount, rigPts:S.dRigPts, height:S.dHeight, splay:(S.dtype==='line'?sa(S.dMdl,S.dBox,S.dSplayAuto,S.dSplayMax):[]), variants:(S.dtype==='line'&&S.dVar&&variantPair(S.dMdl))?effVarIdx(S.dVar,S.dBox):null},
-      center:{on:S.cOn, type:cTypeEff(), mdl:S.cMdl, box:S.cBox, amp:S.cAmp, link:S.cLink, height:S.cHeight, aim:S.cAim, rigPts:S.cRigPts, splay:(cTypeEff()==='line'?sa(S.cMdl,S.cBox,S.cSplayAuto,S.cSplayMax):[]), variants:(cTypeEff()==='line'&&S.cVar&&variantPair(S.cMdl))?effVarIdx(S.cVar,S.cBox):null},
+      delay:{on:S.dOn, type:S.dtype, mdl:S.dMdl, box:S.dBox, amp:S.dAmp, link:S.dLink, horiz:S.dHoriz, dist:S.dDist, alignMs:(S.dAlignAuto?null:S.dAlignMs), aim:S.dAim, mount:S.dMount, rigPts:S.dRigPts, height:S.dHeight, splay:(S.dtype==='line'?sa(S.dMdl,S.dBox,S.dSplayAuto,S.dSplayMax):[]), variants:(S.dtype==='line'&&S.dVar&&variantPair(S.dMdl))?effVarIdx(S.dVar,S.dBox):null},
+      center:{on:S.cOn, type:cTypeEff(), mdl:S.cMdl, box:S.cBox, amp:S.cAmp, link:S.cLink, horiz:S.cHoriz, height:S.cHeight, aim:S.cAim, rigPts:S.cRigPts, splay:(cTypeEff()==='line'?sa(S.cMdl,S.cBox,S.cSplayAuto,S.cSplayMax):[]), variants:(cTypeEff()==='line'&&S.cVar&&variantPair(S.cMdl))?effVarIdx(S.cVar,S.cBox):null},
       out:{on:S.oOn, type:oTypeEff(), mdl:S.oMdl, box:S.oBox, amp:S.oAmp, link:S.oLink, mount:S.oMount, tilt:S.oTilt, horiz:S.oHoriz, rigPts:S.oRigPts, splay:(oTypeEff()==='line'?sa(S.oMdl,S.oBox,S.oSplayAuto,S.oSplayMax):[]), variants:(oTypeEff()==='line'&&S.oVar&&variantPair(S.oMdl))?effVarIdx(S.oVar,S.oBox):null} };
     // 전체 UI 상태를 함께 저장 → 나중에 '설정 열기'로 그대로 복원(어디서 잘못됐는지 검토용)
     spec._state=JSON.parse(JSON.stringify(S)); spec._state.projName=pn; spec._state.projVer=pv;
@@ -1971,10 +1975,11 @@
   // ── 설정 저장/불러오기 ── 저장된 상태(S)를 모든 컨트롤에 복원
   function syncUI(){
     if(S.preset==='youngin')S.preset='church';  // 구버전 설정 호환
-    ['depth','width','stageW','trim','spl','program','preset','mMdl','mAmp','mBox','mTilt','splayMax','mHoriz','sMdl','sAmp','sBox','subPos','sCfg','fSubBox','fMdl','fAmp','fBox','fAim','dMdl','dAmp','dBox','dAim','dSplayMax','dHeight','cMdl','cAmp','cBox','cAim','cSplayMax','oMdl','oAmp','oBox','oTilt','oSplayMax','oHoriz'].forEach(function(id){
+    ['depth','width','stageW','trim','spl','program','preset','mMdl','mAmp','mBox','mTilt','splayMax','mHoriz','sMdl','sAmp','sBox','subPos','sCfg','fSubBox','fMdl','fAmp','fBox','fAim','dMdl','dAmp','dBox','dAim','dSplayMax','dHeight','cMdl','cAmp','cBox','cAim','cSplayMax','oMdl','oAmp','oBox','oTilt','oSplayMax','oHoriz','dHoriz','cHoriz'].forEach(function(id){
       var el=$(id); if(el && S[id]!==undefined && S[id]!==null) el.value=S[id];
     });
     $('projName').value=S.projName||''; updVerBadge();
+    var _dhv=$('dHorizV'); if(_dhv)_dhv.textContent=S.dHoriz||0; var _chv=$('cHorizV'); if(_chv)_chv.textContent=S.cHoriz||0;
     if(!Array.isArray(S.customs))S.customs=[]; if(window.__cuRebuild)window.__cuRebuild();
     ['fOn','dOn','cOn','oOn','fSubOn','fRot'].forEach(function(id){ var el=$(id); if(el) el.checked=!!S[id]; });
     ['env','maintype','dtype','rigPts','fRigPts','dRigPts','cRigPts','oRigPts','mMount','dMount','oMount','cType','oType','fType'].forEach(function(id){
@@ -2214,10 +2219,10 @@
         else { var fb=num(S.fBox,6), hwf=Math.max(2,(num(S.stageW,12)/2)-0.5), fxx=(fx0===null?xF:fx0);
           for(var j=0;j<fb;j++){ var yf=fy0+(fb>1?(-1+2*j/(fb-1)):0)*hwf; push({label:'F',part:'front',x:fxx,y:yf,bx:fxx,by:fy0,z0:1.2,z1:1.2,c:'#22c55e',kind:'front',g:{type:'point',n:1,ch:0.25,tilt:-Math.abs(num(S.fAim,0)||30),horiz:0,mdl:S.fMdl,hd:pdisp(S.fMdl)[0],vd:pdisp(S.fMdl)[1]}}); } } }
       if(S.dOn){ var dh=num(S.dHeight,3), xDd=(xDl===null)?Math.round((xF+num(S.dDist,22))*10)/10:xDl;
-        var dG={type:(S.dtype==='line'?'line':'point'),n:num(S.dBox,6),ch:famH(S.dMdl),tilt:num(S.dAim,0),horiz:0,mount:S.dMount,mdl:S.dMdl,la:(S.dtype==='line'?laData(S.dMdl,num(S.dBox,6),num(S.dAim,0),S.dMount,S.dSplayAuto,S.dSplayMax,S.dRigPts,S.dVar):null),hd:(S.dtype==='line'?90:pdisp(S.dMdl)[0]),vd:(S.dtype==='line'?0:pdisp(S.dMdl)[1])};
+        var dG={type:(S.dtype==='line'?'line':'point'),n:num(S.dBox,6),ch:famH(S.dMdl),tilt:num(S.dAim,0),horiz:num(S.dHoriz,0),mount:S.dMount,mdl:S.dMdl,la:(S.dtype==='line'?laData(S.dMdl,num(S.dBox,6),num(S.dAim,0),S.dMount,S.dSplayAuto,S.dSplayMax,S.dRigPts,S.dVar):null),hd:(S.dtype==='line'?90:pdisp(S.dMdl)[0]),vd:(S.dtype==='line'?0:pdisp(S.dMdl)[1])};
         var dBoxH=(S.dtype==='line'?dG.n*dG.ch:0.4);
         [-1,1].forEach(function(s){ push({label:'D',part:'delay',x:xDd,y:s*yDl,bx:xDd,by:s*yDl,z0:dh,z1:Math.max(0.2,dh-dBoxH),c:'#eab308',kind:'delay',g:dG}); }); }
-      if(S.cOn){ var cG={type:_ct,n:num(S.cBox,6),ch:famH(S.cMdl),tilt:num(S.cAim,0),horiz:0,mount:'flown',mdl:S.cMdl,la:(_ct==='line'?laData(S.cMdl,num(S.cBox,6),num(S.cAim,0),'flown',S.cSplayAuto,S.cSplayMax,S.cRigPts,S.cVar):null),hd:(_ct==='line'?90:pdisp(S.cMdl)[0]),vd:(_ct==='line'?0:pdisp(S.cMdl)[1])};
+      if(S.cOn){ var cG={type:_ct,n:num(S.cBox,6),ch:famH(S.cMdl),tilt:num(S.cAim,0),horiz:num(S.cHoriz,0),mount:'flown',mdl:S.cMdl,la:(_ct==='line'?laData(S.cMdl,num(S.cBox,6),num(S.cAim,0),'flown',S.cSplayAuto,S.cSplayMax,S.cRigPts,S.cVar):null),hd:(_ct==='line'?90:pdisp(S.cMdl)[0]),vd:(_ct==='line'?0:pdisp(S.cMdl)[1])};
         var cBoxH=(_ct==='line'?cG.n*cG.ch:0.4);
         push({label:'C',part:'center',x:xC,y:yC2,bx:xC,by:yC2,z0:num(S.cHeight,trim),z1:Math.max(0.2,num(S.cHeight,trim)-cBoxH),c:'#f472b6',kind:'center',g:cG}); }
       if(S.oOn){ var oG={type:_ot,n:num(S.oBox,8),ch:famH(S.oMdl),tilt:num(S.oTilt,0),horiz:num(S.oHoriz,0),mount:S.oMount,mdl:S.oMdl,la:(_ot==='line'?laData(S.oMdl,num(S.oBox,8),num(S.oTilt,0),S.oMount,S.oSplayAuto,S.oSplayMax,S.oRigPts,S.oVar):null),hd:(_ot==='line'?90:pdisp(S.oMdl)[0]),vd:(_ot==='line'?0:pdisp(S.oMdl)[1])};
@@ -2451,12 +2456,12 @@
       var xF=Math.round((vx0-2)*10)/10, yM=Math.round(vy*0.55*10)/10, yO=Math.round(vy*0.82*10)/10;
       var subFixed=(S.subPos==='flown'&&(S.flyMode||'integrated')==='integrated');
       var P=[];
-      P.push({part:'main',nm:'메인',c:'#1877F2',on:true,dx:xF,dy:yM,mir:true,z:trim,zk:'trim'});
+      P.push({part:'main',nm:'메인',c:'#1877F2',on:true,dx:xF,dy:yM,mir:true,z:trim,zk:'trim',hk:'mHoriz'});
       P.push({part:'sub',nm:'서브',c:'#a855f7',on:!!(S.sMdl&&num(S.sBox,0)>0),dx:xF,dy:yM,mir:true,z:(S.subPos==='flown'?trim-0.5:0),zk:null,fixed:subFixed});
       P.push({part:'front',nm:'프론트필',c:'#22c55e',on:!!S.fOn,dx:(S.fType==='line'?0:xF),dy:0,mir:false,z:(S.fType==='line'?2.5:1.2),zk:null});
-      P.push({part:'delay',nm:'딜레이',c:'#eab308',on:!!S.dOn,dx:Math.round((xF+num(S.dDist,22))*10)/10,dy:yM,mir:true,z:num(S.dHeight,3),zk:'dHeight'});
-      P.push({part:'center',nm:'센터',c:'#f472b6',on:!!S.cOn,dx:xF,dy:0,mir:false,z:num(S.cHeight,trim),zk:'cHeight'});
-      P.push({part:'out',nm:'아웃',c:'#38bdf8',on:!!S.oOn,dx:xF,dy:yO,mir:true,z:trim-0.5,zk:null});
+      P.push({part:'delay',nm:'딜레이',c:'#eab308',on:!!S.dOn,dx:Math.round((xF+num(S.dDist,22))*10)/10,dy:yM,mir:true,z:num(S.dHeight,3),zk:'dHeight',hk:'dHoriz'});
+      P.push({part:'center',nm:'센터',c:'#f472b6',on:!!S.cOn,dx:xF,dy:0,mir:false,z:num(S.cHeight,trim),zk:'cHeight',hk:'cHoriz'});
+      P.push({part:'out',nm:'아웃',c:'#38bdf8',on:!!S.oOn,dx:xF,dy:yO,mir:true,z:trim-0.5,zk:null,hk:'oHoriz'});
       P.forEach(function(p){ var o=OV[p.part]||{};
         p.ov=(o.x!==undefined||o.y!==undefined);
         p.ex=(o.x!==undefined&&o.x!==null)?+o.x:p.dx;
@@ -2465,7 +2470,7 @@
     }
     function veSpkTable(){
       var el=document.getElementById('veSpkRows'); if(!el)return;
-      var head='<div class="vesph"><span style="text-align:left">파트</span><span>X깊이</span><span>Y좌우</span><span>Z높이</span><span>상태</span><span></span></div>';
+      var head='<div class="vesph"><span style="text-align:left">파트</span><span>X깊이</span><span>Y좌우</span><span>Z높이</span><span>토우°</span><span>상태</span><span></span></div>';
       var rows=veSpkParts().filter(function(p){return p.on;}).map(function(p){
         var yLab=p.mir?('±'+(+p.ey.toFixed(2))):(+p.ey.toFixed(2));
         var zEdit=!!p.zk, dis=p.fixed?' disabled':'';
@@ -2474,6 +2479,7 @@
           +'<input type="number" step="any" data-k="x" value="'+(+p.ex.toFixed(2))+'"'+dis+'>'
           +'<input type="number" step="any" data-k="y" value="'+(+p.ey.toFixed(2))+'" title="'+(p.mir?'좌우 대칭 폭(±)':'중심 오프셋(+우측)')+'"'+dis+'>'
           +(zEdit?'<input type="number" step="any" data-k="z" value="'+(+p.z.toFixed(2))+'">':'<input value="'+(+p.z.toFixed(2))+'" disabled>')
+          +(p.hk?'<input type="number" step="1" data-k="h" value="'+(num(S[p.hk],0))+'" title="토우(안쪽+) — 좌우 미러">':'<input value="—" disabled>')
           +'<span class="st">'+(p.ov?'지정':'자동')+'</span>'
           +'<button type="button" data-rs="'+p.part+'" title="자동 위치로 복귀">↺</button></div>';
       }).join('');
@@ -2729,6 +2735,10 @@
       if(srows){
         srows.addEventListener('input',function(e){ var t=e.target,tr=t.closest('.vespr'); if(!tr||t.disabled)return;
           var part=tr.dataset.part,k=t.dataset.k,v=parseFloat(t.value); if(!isFinite(v)||!k)return;
+          if(k==='h'){ var pdef=veSpkParts().filter(function(p){return p.part===part;})[0];
+            if(pdef&&pdef.hk){ S[pdef.hk]=Math.max(-30,Math.min(30,v)); var hEl=$(pdef.hk); if(hEl)hEl.value=S[pdef.hk];
+              var hV=$(pdef.hk+'V'); if(hV)hV.textContent=S[pdef.hk]; }
+            veSync(); drawPlan(); drawSide(); return; }
           if(k==='z'){ if(part==='main'){S.trim=Math.max(2,Math.min(30,v)); var tE=$('trim'); if(tE)tE.value=S.trim; var tV=$('trimV'); if(tV)tV.textContent=S.trim;}
             else if(part==='delay'){S.dHeight=Math.max(1,Math.min(20,v)); S.dHeightAuto=false; var dE=$('dHeight'); if(dE)dE.value=S.dHeight;}
             else if(part==='center'){S.cHeight=Math.max(1,Math.min(30,v)); S.cHeightAuto=false; var cE=$('cHeight'); if(cE)cE.value=S.cHeight;}
@@ -2794,8 +2804,11 @@
         try{sessionStorage.setItem('dbsd_pane',p);}catch(e){}
       };
       tabs.addEventListener('click',function(e){ var b=e.target.closest('button'); if(b&&b.dataset.pane)window.__showPane(b.dataset.pane); });
-      var _ip='venue'; try{_ip=sessionStorage.getItem('dbsd_pane')||'venue';}catch(e){}
+      var _ip='main'; try{_ip=sessionStorage.getItem('dbsd_pane')||'main';}catch(e){}
+      if(!document.querySelector('#cfg .grp[data-pane="'+_ip+'"]')&&_ip.slice(0,2)!=='cu')_ip='main';
+      if(_ip==='venue')_ip='main';
       window.__showPane(_ip);
+      var vebtn=$('veOpenTab'); if(vebtn)vebtn.addEventListener('click',function(){ if(window.veOpen)window.veOpen(); });
     }
     // ── 커스텀 스피커: 탭 재구성 + 페인 렌더(메인과 동일 옵션) ──
     var CU_COLS=['#f97316','#06b6d4','#84cc16','#e879f9','#f43f5e','#2dd4bf'];
@@ -2876,7 +2889,7 @@
       });
       panesEl.addEventListener('click',function(e){
         var d=e.target.dataset.cudel;
-        if(d!==undefined){ S.customs.splice(+d,1); window.__cuRebuild(); window.__showPane('venue'); render(); return; }
+        if(d!==undefined){ S.customs.splice(+d,1); window.__cuRebuild(); window.__showPane('main'); render(); return; }
         var sb=e.target.closest('.seg[data-cuseg] button'); if(!sb)return;
         var segEl=sb.closest('.seg'), ci2=+segEl.dataset.ci, key=segEl.dataset.cuseg, c2=S.customs[ci2]; if(!c2)return;
         c2[key]=(key==='rigPts')?sb.dataset.v:sb.dataset.v;
@@ -3379,7 +3392,8 @@ Builder.prototype.lineArray=function(name,system,amp,sideY,topz,tilt,boxes,splay
   }
   return sg;
 };
-Builder.prototype.pointRow=function(name,system,amp,spk,ys,zpos,aim,xpos,sym,link,dms){
+Builder.prototype.pointRow=function(name,system,amp,spk,ys,zpos,aim,xpos,sym,link,dms,horiz){
+  horiz=+(horiz||0);
   xpos=xpos||0;sym=sym||0;
   amp=ampFix(name,spk,amp); this._dms=(dms===undefined?0.3:dms);
   var sg=this.sgroup({typ:2,name:name,system:system,amp:amp,sym:sym});var d=null,slot=0,grp=0;
@@ -3393,7 +3407,8 @@ Builder.prototype.pointRow=function(name,system,amp,spk,ys,zpos,aim,xpos,sym,lin
     if(slot%lk===0){grp++; this.chname(d,lead,pair,name+' '+(grp<10?'0':'')+grp);}
     this.devinfo[d].cnt[lead]=(this.devinfo[d].cnt[lead]||0)+1;
     slot++;
-    this.cab(d,lead,spk,sg,i+1,0,R(aim,1),R(xpos,2),R(ys[i],2),R(zpos,2),0);this.reg(name,d,lead);
+    var _h=R(ys[i]<0?horiz:(ys[i]>0?-horiz:horiz),1);
+    this.cab(d,lead,spk,sg,i+1,_h,R(aim,1),R(xpos,2),R(ys[i],2),R(zpos,2),0);this.reg(name,d,lead);
   }
   return sg;
 };
@@ -3810,11 +3825,11 @@ function build(db,spec){
       var dmnt=d.mount||'flown';var cl2=clampLine(dm,d.box||8,d.splay,dmnt);var nb4=cl2[0],sp2=cl2[1];var bx4=applyManualVariants(variants(nb4,LINE[dm]),LINE[dm],d.variants);
       var ndl=b.sg;
       var dms_=(d.alignMs!==undefined&&d.alignMs!==null)?R(+d.alignMs,1):R((xDl-xM)/343.0*1000+0.3,1);
-      b.lineArray('DELAY L',dm,d.amp||'D40',-yDl,ht,d.aim||0,bx4,sp2,dmnt,xDl,0,'DELAY',ndl+1,0,null,d.link||1,dms_);
-      b.lineArray('DELAY R',dm,d.amp||'D40', yDl,ht,d.aim||0,bx4,sp2,dmnt,xDl,0,'DELAY',0,0,-1,d.link||1,dms_);
+      b.lineArray('DELAY L',dm,d.amp||'D40',-yDl,ht,d.aim||0,bx4,sp2,dmnt,xDl,+(d.horiz||0),'DELAY',ndl+1,0,null,d.link||1,dms_);
+      b.lineArray('DELAY R',dm,d.amp||'D40', yDl,ht,d.aim||0,bx4,sp2,dmnt,xDl,-(+(d.horiz||0)),'DELAY',0,0,-1,d.link||1,dms_);
     }else if(d.type==='point'&&POINT[altOf(dm)]){
       var dm2=altOf(dm);var pu2=POINT[dm2];
-      b.pointRow('Delay',pu2[2],d.amp||'D40',pu2[1],[-yDl,yDl],ht,d.aim||0,xDl,1,d.link||1,(d.alignMs!==undefined&&d.alignMs!==null)?R(+d.alignMs,1):R((xDl-xM)/343.0*1000+0.3,1));
+      b.pointRow('Delay',pu2[2],d.amp||'D40',pu2[1],[-yDl,yDl],ht,d.aim||0,xDl,1,d.link||1,(d.alignMs!==undefined&&d.alignMs!==null)?R(+d.alignMs,1):R((xDl-xM)/343.0*1000+0.3,1),+(d.horiz||0));
     }else warn('딜레이 '+dm+' 미보유→건너뜀');
   }
   var c=spec.center||{};
@@ -3823,10 +3838,10 @@ function build(db,spec){
     if(c.type==='line'&&LINE[cm]){
       var cl3=clampLine(cm,c.box||6,c.splay,'flown');var nb5=cl3[0],sp3=cl3[1];var bx5=applyManualVariants(variants(nb5,LINE[cm]),LINE[cm],c.variants);
       var zc=R(+(c.height||zM),1);
-      b.lineArray('CENTER',cm,c.amp||'D80',yC,zc,c.aim||0,bx5,sp3,'flown',xC,0,null,0,1,null,c.link||1,0.3,null,c.rigPts||'2');
+      b.lineArray('CENTER',cm,c.amp||'D80',yC,zc,c.aim||0,bx5,sp3,'flown',xC,+(c.horiz||0),null,0,1,null,c.link||1,0.3,null,c.rigPts||'2');
     }else if(POINT[altOf(cm)]){
       var cm2=altOf(cm);var pu3=POINT[cm2];
-      b.pointRow('Center',pu3[2],c.amp||'D80',pu3[1],[yC],R(+(c.height||zM),1),c.aim||0,xC,1,c.link||1);
+      b.pointRow('Center',pu3[2],c.amp||'D80',pu3[1],[yC],R(+(c.height||zM),1),c.aim||0,xC,1,c.link||1,0.3,+(c.horiz||0));
     }else warn('센터필 '+cm+' 미보유→건너뜀');
   }
   var o=spec.out||{};
@@ -3869,7 +3884,7 @@ function build(db,spec){
         var cm2=POINT[cmdl]?cmdl:altOf(cmdl);
         if(POINT[cm2]){ var pu9=POINT[cm2];
           var ys2=csym?[-Math.abs(cyv),Math.abs(cyv)]:[cyv];
-          b.pointRow(cnm,pu9[2],camp,pu9[1],ys2,cz,cam,cx,csym,clk);
+          b.pointRow(cnm,pu9[2],camp,pu9[1],ys2,cz,cam,cx,csym,clk,0.3,+(cu.horiz||0));
         } else warn('커스텀 '+cnm+': 모델 '+cmdl+' 미보유→건너뜀');
       }
     }catch(e){ warn('커스텀 그룹 실패('+(cu.name||'?')+'): '+e); }

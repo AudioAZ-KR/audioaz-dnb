@@ -372,7 +372,7 @@ class Builder:
             cog_hole=(cogx+COG_BASE.get(_fs,0.4)-0.025)/pitch    # 프레임 앞끝 기준 CoG위치 → 싱글홀
             self.flying_frame(sg,_fs,horiz,ox,side_y,oz,single=(str(rigpts)=='1'),cog_hole=cog_hole,ncab=subN+n,tilt=tilt)
         return sg
-    def point_row(self,name,system,amp,spk,ys,zpos,aim,xpos=0.0,sym=0,link=1,dms=0.3):
+    def point_row(self,name,system,amp,spk,ys,zpos,aim,xpos=0.0,sym=0,link=1,dms=0.3,horiz=0):
         amp=amp_fix(name,spk,amp); self._dms=dms
         # 포인트 열: 폭(Y)으로 퍼지고, 깊이(X)=xpos 고정, 높이(Z)=zpos. (기존 X/Y 축 뒤바뀜 버그 수정)
         sg=self.sgroup(2,name,system,amp,sym=sym); d=None; slot=0; grp=0
@@ -387,7 +387,8 @@ class Builder:
                 grp+=1; self.chname(d,lead,pair,f"{name} {grp:02d}")
             self.devinfo[d]['cnt'][lead]=self.devinfo[d]['cnt'].get(lead,0)+1
             slot+=1
-            self.cab(d,lead,spk,sg,i+1,0,R(aim,1),R(xpos,2),R(y,2),R(zpos,2),0); self.reg(name,d,lead)
+            _h=R(horiz if y<0 else (-horiz if y>0 else horiz),1)   # 토우: L=+, R=-(안쪽), 단일=그대로
+            self.cab(d,lead,spk,sg,i+1,_h,R(aim,1),R(xpos,2),R(y,2),R(zpos,2),0); self.reg(name,d,lead)
         return sg
     def sub_stack(self,name,system,amp,spk,positions,ox=0,oy=0,sym=0,link=1,dms=0.3):
         amp=amp_fix(name,spk,amp); self._dms=dms
@@ -778,10 +779,10 @@ def build(spec,outpath):
             _ndl=b.sg
             _am=d.get('alignMs')
             dms_=R(float(_am),1) if _am is not None else R((xDl-xM)/343.0*1000+0.3,1)
-            b.line_array('DELAY L',dm,d.get('amp','D40'),-yDl,ht,d.get('aim',0),bx,sp,dmnt,xDl,gname='DELAY',nxt=_ndl+1,link=d.get('link',1),dms=dms_)
-            b.line_array('DELAY R',dm,d.get('amp','D40'), yDl,ht,d.get('aim',0),bx,sp,dmnt,xDl,gname='DELAY',ordr=-1,link=d.get('link',1),dms=dms_)
+            b.line_array('DELAY L',dm,d.get('amp','D40'),-yDl,ht,d.get('aim',0),bx,sp,dmnt,xDl,horiz=float(d.get('horiz') or 0),gname='DELAY',nxt=_ndl+1,link=d.get('link',1),dms=dms_)
+            b.line_array('DELAY R',dm,d.get('amp','D40'), yDl,ht,d.get('aim',0),bx,sp,dmnt,xDl,horiz=-float(d.get('horiz') or 0),gname='DELAY',ordr=-1,link=d.get('link',1),dms=dms_)
         elif d.get('type')=='point' and alt(dm,'point') in POINT:
-            dm2=alt(dm,'point'); _,pid,psys=POINT[dm2]; b.point_row('Delay',psys,d.get('amp','D40'),pid,[-yDl,yDl],ht,d.get('aim',0),xDl,sym=1,link=d.get('link',1),dms=(R(float(d.get('alignMs')),1) if d.get('alignMs') is not None else R((xDl-xM)/343.0*1000+0.3,1)))
+            dm2=alt(dm,'point'); _,pid,psys=POINT[dm2]; b.point_row('Delay',psys,d.get('amp','D40'),pid,[-yDl,yDl],ht,d.get('aim',0),xDl,sym=1,link=d.get('link',1),horiz=float(d.get('horiz') or 0),dms=(R(float(d.get('alignMs')),1) if d.get('alignMs') is not None else R((xDl-xM)/343.0*1000+0.3,1)))
         else: warnings.append(f"딜레이 {dm} 미보유→건너뜀")
     c=spec.get('center',{})
     if c.get('on'):
@@ -789,8 +790,8 @@ def build(spec,outpath):
         if c.get('type')=='line' and cm in LINE:
             nb,sp=clamp_line(cm,c.get('box',6),c.get('splay'),'flown'); nm=LINE[cm]; bx=apply_manual_variants(variants(nb,*nm),nm,c.get('variants'))
             zc=R(float(c.get('height') or z_main),1)
-            b.line_array('CENTER',cm,c.get('amp','D80'),yC,zc,c.get('aim',0),bx,sp,'flown',xC,sym=1,link=c.get('link',1),rigpts=c.get('rigPts','2'))
-        elif alt(cm,'point') in POINT: cm2=alt(cm,'point'); _,pid,psys=POINT[cm2]; b.point_row('Center',psys,c.get('amp','D80'),pid,[yC],R(float(c.get('height') or z_main),1),c.get('aim',0),xC,sym=1,link=c.get('link',1))
+            b.line_array('CENTER',cm,c.get('amp','D80'),yC,zc,c.get('aim',0),bx,sp,'flown',xC,horiz=float(c.get('horiz') or 0),sym=1,link=c.get('link',1),rigpts=c.get('rigPts','2'))
+        elif alt(cm,'point') in POINT: cm2=alt(cm,'point'); _,pid,psys=POINT[cm2]; b.point_row('Center',psys,c.get('amp','D80'),pid,[yC],R(float(c.get('height') or z_main),1),c.get('aim',0),xC,sym=1,horiz=float(c.get('horiz') or 0),link=c.get('link',1))
         else: warnings.append(f"센터필 {cm} 미보유→건너뜀")
     o=spec.get('out',{})
     if o.get('on'):
@@ -835,7 +836,7 @@ def build(spec,outpath):
                 if cm2 in POINT:
                     _,pid2,psys2=POINT[cm2]
                     ys2=([-abs(cyv),abs(cyv)] if csym else [cyv])
-                    b.point_row(cnm,psys2,camp,pid2,ys2,cz,cam,cx,sym=csym,link=clk)
+                    b.point_row(cnm,psys2,camp,pid2,ys2,cz,cam,cx,sym=csym,link=clk,horiz=float(cu.get('horiz') or 0))
                 else:
                     warnings.append(f"커스텀 {cnm}: 모델 {cmdl} 미보유→건너뜀")
         except Exception as e:

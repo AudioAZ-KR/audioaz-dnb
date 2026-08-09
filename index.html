@@ -217,6 +217,15 @@
 #veModal .vechip{display:inline-block;width:8px;height:8px;border-radius:2px;margin:0 3px 0 6px;vertical-align:middle}
 @media(max-width:1000px){ #veModal .vebody{flex-direction:column} #veModal .veside{width:auto;min-width:0;border-left:none;border-top:1px solid var(--line);max-height:40vh} }
 
+/* ── 파트 탭 ── */
+#cfgTabs{display:flex;gap:4px;flex-wrap:wrap;position:sticky;top:0;z-index:6;background:var(--panel);padding:8px 0 8px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+#cfgTabs button{display:flex;align-items:center;gap:5px;padding:7px 10px;font-size:12px;font-family:var(--mono);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;color:var(--ink-2);cursor:pointer;transition:border-color .12s,background .12s}
+#cfgTabs button:hover{border-color:var(--ink-3)}
+#cfgTabs button.on{border-color:var(--brand);color:var(--ink);background:rgba(24,119,242,.13);font-weight:700}
+#cfgTabs button.offpart{opacity:.45}
+#cfgTabs .tdot{width:7px;height:7px;border-radius:50%;flex:none}
+#cfg .grp[data-pane]{display:none}
+#cfg .grp[data-pane].paneon{display:block}
 </style>
 
 <h2 class="sr-only">d&b 시스템 디자이너 — 라인어레이/포인트소스 모델·앰프를 선택하고 목표 SPL과 베뉴 크기로 통수와 스플레이 각도를 추천받아 ArrayCalc/R1 물량을 산출하는 컨셉 툴</h2>
@@ -233,7 +242,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.61</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.62</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -253,7 +262,16 @@
 
   <div class="app">
     <form class="card" id="cfg" aria-label="시스템 구성">
-      <div class="grp">
+        <div id="cfgTabs" role="tablist" aria-label="파트 선택">
+          <button type="button" data-pane="venue" class="on"><span class="tdot" style="background:var(--brand)"></span>베뉴</button>
+          <button type="button" data-pane="main" id="ctabMain"><span class="tdot" style="background:var(--accent)"></span>메인</button>
+          <button type="button" data-pane="sub" id="ctabSub"><span class="tdot" style="background:var(--violet)"></span>서브</button>
+          <button type="button" data-pane="front" id="ctabFront"><span class="tdot" style="background:var(--good)"></span>프론트필</button>
+          <button type="button" data-pane="delay" id="ctabDelay"><span class="tdot" style="background:var(--warn)"></span>딜레이</button>
+          <button type="button" data-pane="center" id="ctabCenter"><span class="tdot" style="background:var(--cfill)"></span>센터</button>
+          <button type="button" data-pane="out" id="ctabOut"><span class="tdot" style="background:var(--ofill)"></span>아웃</button>
+        </div>
+      <div class="grp" data-pane="venue">
         <h2><span class="l"><span class="dot" style="background:var(--ink-3)"></span>베뉴 · 목표</span></h2>
         <label class="f"><span class="flab">프리셋</span>
           <select id="preset">
@@ -280,7 +298,7 @@
         </div>
       </div>
 
-      <div class="grp" id="venueGrp">
+      <div class="grp" data-pane="venue" id="venueGrp">
         <h2><span class="l"><span class="dot" style="background:var(--brand)"></span>베뉴 도면</span>
           <input type="checkbox" id="vOn" style="display:none"> <button type="button" class="themebtn" id="veOpenBtn" style="font-size:11px;padding:3px 10px;border-color:var(--brand);color:var(--brand)">🗺 편집기 열기</button></h2>
         <div id="vBody" style="display:none">
@@ -294,7 +312,7 @@
         </div>
       </div>
 
-      <div class="grp">
+      <div class="grp" data-pane="main">
         <h2><span class="l"><span class="dot" style="background:var(--accent)"></span>메인</span> <span class="auto" id="mainAuto">auto</span></h2>
         <div class="seg" id="maintype" role="group" aria-label="메인 타입" style="margin-bottom:11px"><button type="button" data-v="auto" aria-pressed="true">자동<span class="s">recommend</span></button><button type="button" data-v="line" aria-pressed="false">라인어레이<span class="s">line</span></button><button type="button" data-v="point" aria-pressed="false">포인트<span class="s">point</span></button></div>
         <label class="f"><span class="flab">모델</span><select id="mMdl"></select></label>
@@ -319,7 +337,7 @@
         <div class="hint" id="mHint"></div>
       </div>
 
-      <div class="grp">
+      <div class="grp" data-pane="sub">
         <h2><span class="l"><span class="dot" style="background:var(--violet)"></span>서브</span></h2>
         <label class="f"><span class="flab">모델</span><select id="sMdl"></select></label>
         <div class="row-amp">
@@ -339,7 +357,7 @@
         </div>
       </div>
 
-      <div class="grp">
+      <div class="grp" data-pane="front">
         <h2><span class="l"><span class="dot" style="background:var(--good)"></span>프론트필</span> <span class="auto" id="fAuto">auto</span></h2>
         <label class="chk" style="margin-bottom:10px"><input type="checkbox" id="fOn" checked> 사용</label>
         <div id="fWrap">
@@ -357,7 +375,7 @@
         </div>
       </div>
 
-      <div class="grp">
+      <div class="grp" data-pane="delay">
         <h2><span class="l"><span class="dot" style="background:var(--warn)"></span>딜레이</span> <span class="auto" id="dAuto">auto</span></h2>
         <label class="chk" style="margin-bottom:10px"><input type="checkbox" id="dOn"> 사용</label>
         <div id="dWrap" style="display:none">
@@ -381,7 +399,7 @@
         </div>
       </div>
 
-      <div class="grp">
+      <div class="grp" data-pane="center">
         <h2><span class="l"><span class="dot" style="background:var(--cfill)"></span>센터필 (플라잉)</span></h2>
         <label class="chk"><input type="checkbox" id="cOn"> 사용 (중앙 1포인트)</label>
         <div id="cWrap" style="display:none;margin-top:10px">
@@ -400,7 +418,7 @@
         </div>
       </div>
 
-      <div class="grp">
+      <div class="grp" data-pane="out">
         <h2><span class="l"><span class="dot" style="background:var(--ofill)"></span>아웃필 (사이드)</span></h2>
         <label class="chk"><input type="checkbox" id="oOn"> 사용 (메인과 동일 구성)</label>
         <div id="oWrap" style="display:none;margin-top:10px">
@@ -549,7 +567,7 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.61</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.62</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -1279,7 +1297,10 @@
       if(go&&go.__home&&go.parentNode===host){ go.__home[0].insertBefore(go,go.__home[1]); go.style.marginTop='16px'; }
     }
   }
+  function paneDim(){ var m={ctabFront:S.fOn,ctabDelay:S.dOn,ctabCenter:S.cOn,ctabOut:S.oOn};
+    Object.keys(m).forEach(function(id){ var b=$(id); if(b)b.classList.toggle('offpart',!m[id]); }); }
   function render(){
+    paneDim();
     var type=decideType();
     // populate model+amp selects
     var mlist = type==='line'?LINE:POINT;
@@ -2677,7 +2698,19 @@
   $('fOn').addEventListener('change',function(){S.fOn=this.checked;S.fAuto=false;render();});
   $('dOn').addEventListener('change',function(){S.dOn=this.checked;S.dAuto=false;render();});
   function seg(id,key,cb){$(id).querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){$(id).querySelectorAll('button').forEach(function(o){o.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');S[key]=b.dataset.v;if(cb)cb();render();});});}
-  seg('env','env');seg('maintype','maintype',function(){S.mBoxAuto=true;S.mTiltAuto=true;S.splayAuto=true;});seg('dtype','dtype',function(){S.dSplayAuto=true;});seg('rigPts','rigPts');seg('fRigPts','fRigPts');seg('dRigPts','dRigPts');seg('cRigPts','cRigPts');seg('oRigPts','oRigPts');seg('mMount','mMount');seg('dMount','dMount');seg('oMount','oMount');
+  seg('env','env');seg('maintype','maintype',function(){S.mBoxAuto=true;S.mTiltAuto=true;S.splayAuto=true;});seg('dtype','dtype',function(){S.dSplayAuto=true;});(function(){
+    var tabs=$('cfgTabs'); if(tabs){
+      window.__showPane=function(p){
+        document.querySelectorAll('#cfg .grp[data-pane]').forEach(function(g){ g.classList.toggle('paneon',g.dataset.pane===p); });
+        tabs.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on',b.dataset.pane===p); });
+        try{sessionStorage.setItem('dbsd_pane',p);}catch(e){}
+      };
+      tabs.addEventListener('click',function(e){ var b=e.target.closest('button'); if(b&&b.dataset.pane)window.__showPane(b.dataset.pane); });
+      var _ip='venue'; try{_ip=sessionStorage.getItem('dbsd_pane')||'venue';}catch(e){}
+      window.__showPane(_ip);
+    }
+  })();
+  seg('rigPts','rigPts');seg('fRigPts','fRigPts');seg('dRigPts','dRigPts');seg('cRigPts','cRigPts');seg('oRigPts','oRigPts');seg('mMount','mMount');seg('dMount','dMount');seg('oMount','oMount');
   $('preset').addEventListener('change',function(){S.preset=this.value;var p=PRESETS[this.value];if(p){Object.assign(S,p);
     ['depth','width','stageW','trim','spl'].forEach(function(k){$(k).value=S[k];$(k+'V').textContent=S[k];});$('program').value=S.program;
     $('env').querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===S.env?'true':'false');});

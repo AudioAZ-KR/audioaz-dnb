@@ -542,6 +542,15 @@ function build(db,spec){
   var xD=R(_dd?((vx0-2)+ +_dd):(vx0+0.52*(vx1-vx0)),1);   // 딜레이 X: 무대앞(메인 위치) 기준 거리 또는 홀 중간
   var yM=R(vy*0.55,1);
   var yO=R(vy*0.82,1);
+  // ── 스피커 위치 오버라이드(spec.spkPos, 베뉴 편집기 드래그) — 없으면 자동 공식 ──
+  var _ovp=spec.spkPos||{};
+  function _op(part,key,dflt){ var p=_ovp[part]||{}; var v=p[key]; if(v===undefined||v===null)return dflt; v=+v; return isFinite(v)?R(v,2):dflt; }
+  var xM=_op('main','x',xF),   yMn=_op('main','y',yM);
+  var xS=_op('sub','x',xF),    ySb=_op('sub','y',yM);
+  var xFf=_op('front','x',null), yFf=_op('front','y',0);
+  var xDl=_op('delay','x',xD), yDl=_op('delay','y',yM);
+  var xC=_op('center','x',xF), yC=_op('center','y',0);
+  var xO=_op('out','x',xF),    yOt=_op('out','y',yO);
   var b=new Builder();
   b.snapdate=String(spec.date||'');  // 스냅샷 CreatedOn(결정적 — 파이썬과 패리티)
   var m=spec.main||{}, _combo=false;   // 포인트-스택 통합 앰프 여부(서브 별도생성 스킵 판정)
@@ -558,8 +567,8 @@ function build(db,spec){
         if(_common.length){_mgrpAmp=_common[0];warn('ℹ 통합 행잉: 한 그룹=한 앰프 → '+m.mdl+'+'+_s0.mdl+' 공통 앰프 '+_mgrpAmp+'로 통일 ('+_s0.mdl+'는 '+_mainamp+' 미지원, '+m.mdl+' 시스템 표준 앰프)');}
         else{_integrated=false;warn('⚠ 통합 행잉 해제: '+m.mdl+'('+_mainamp+')와 '+_s0.mdl+'가 공통 앰프 없음 → 서브를 별도 G.SUB 그룹으로 생성(메인 앰프 유지)');}}
       if(_integrated)_subtop={spk:_integspk,n:_per,amp:_mgrpAmp,part:'G.SUB',h:subH(SUB[_sm2][0]),link:_s0.link||1};}
-    b.lineArray('MAIN L',m.mdl,_mgrpAmp,-yM,zMtop,m.tilt||0,bx,sp,mnt,xF,mh,'MAIN',nl+1,0,null,m.link||1,0.3,_subtop,m.rigPts||'2');
-    b.lineArray('MAIN R',m.mdl,_mgrpAmp, yM,zMtop,m.tilt||0,bx,sp,mnt,xF,-mh,'MAIN',0,0,-1,m.link||1,0.3,(_subtop?{spk:_subtop.spk,n:_subtop.n,amp:_subtop.amp,part:_subtop.part,h:_subtop.h,link:_subtop.link}:null),m.rigPts||'2');
+    b.lineArray('MAIN L',m.mdl,_mgrpAmp,-yMn,zMtop,m.tilt||0,bx,sp,mnt,xM,mh,'MAIN',nl+1,0,null,m.link||1,0.3,_subtop,m.rigPts||'2');
+    b.lineArray('MAIN R',m.mdl,_mgrpAmp, yMn,zMtop,m.tilt||0,bx,sp,mnt,xM,-mh,'MAIN',0,0,-1,m.link||1,0.3,(_subtop?{spk:_subtop.spk,n:_subtop.n,amp:_subtop.amp,part:_subtop.part,h:_subtop.h,link:_subtop.link}:null),m.rigPts||'2');
   }else if(m.type==='point'){
     var mm0=altOf(m.mdl);
     if(POINT[mm0]){
@@ -574,16 +583,16 @@ function build(db,spec){
       }
       // ── 포인트-스택 메인 + 서브 ≤4채널 → 앰프 1대 통합. 채널 기준(서브 링크 반영: 서브ch=ceil(통수/링크)) ──
       var _cs=spec.sub||{},_csm=_cs.mdl?altOf(_cs.mdl):null,_sbox=Math.trunc(+(_cs.box||0)),_slink=Math.max(1,Math.trunc(+(_cs.link||1)));
-      var _ys=[-yM,yM],_mch=_ys.length, _subch=_sbox?Math.ceil(_sbox/_slink):0;
+      var _ys=[-yMn,yMn],_mch=_ys.length, _subch=_sbox?Math.ceil(_sbox/_slink):0;
       var _mbi=!!CH2_IDS[pu0[1]],_sbi=SUB[_csm]?!!CH2_IDS[SUB[_csm][1]]:true;
       var _common=SUB[_csm]?(AMP_OK[pu0[1]]||[]).filter(function(a){return (AMP_OK[SUB[_csm][1]]||[]).indexOf(a)>=0;}):[];
       _combo=(m.mount==='stack'&&!!SUB[_csm]&&_sbox>=1&&(_mch+_subch)<=4&&_common.length>0&&!_mbi&&!_sbi);
       if(_combo){
         var _camp=_common[0];
-        b.pointStackCombo('MAIN',pu0[2],pu0[1],_ys,zPt,m.tilt||0,xF,'G.SUB',SUB[_csm][2],SUB[_csm][1],_sbox,_slink,xF,subH(SUB[_csm][0]),_camp,1);
+        b.pointStackCombo('MAIN',pu0[2],pu0[1],_ys,zPt,m.tilt||0,xM,'G.SUB',SUB[_csm][2],SUB[_csm][1],_sbox,_slink,xM,subH(SUB[_csm][0]),_camp,1);
         warn('ℹ 통합 앰프: '+m.mdl+' '+_mch+'통 + '+_cs.mdl+' '+_sbox+'통(링크1:'+_slink+'→'+_subch+'ch) = '+(_mch+_subch)+'채널 → '+_camp+' 1대(측당 탑+서브 A/B·C/D).');
       }else{
-        b.pointRow('MAIN',pu0[2],m.amp||'D80',pu0[1],_ys,zPt,m.tilt||0,xF,1,m.link||1);
+        b.pointRow('MAIN',pu0[2],m.amp||'D80',pu0[1],_ys,zPt,m.tilt||0,xM,1,m.link||1);
       }
     }else warn('메인 '+m.mdl+' 미보유→건너뜀');
   }else if(m.type==='line')warn('메인 '+m.mdl+' 미보유→건너뜀');
@@ -602,21 +611,21 @@ function build(db,spec){
       var fmo=s.flyMode||'integrated';
       var _shh=subH(SUB[smdl][0]);
       if(fmo==='behind'){
-        var xb=R(xF-2.0,1);
+        var xb=R(xS-2.0,1);
         if(nb===1)pos.push([xb,0,zs]);
-        else for(var kb=0;kb<nb;kb++)pos.push([xb,R((-1+2*kb/(nb-1))*(yM*0.75),2),zs]);
+        else for(var kb=0;kb<nb;kb++)pos.push([xb,R((-1+2*kb/(nb-1))*(ySb*0.75),2),zs]);
         warn('ℹ G.SUB 플라잉(메인 뒤 별도): 무대 뒤 센터 브로드사이드 서브 어레이 — 정렬·커버리지는 ArrayCalc 확인');
       }else if(fmo==='stacked'){
         [-1,1].forEach(function(side){
           var cnt=half+((side<0&&nb%2)?1:0);
-          for(var k=0;k<cnt;k++)pos.push([xF,side*yM,R(zM-k*_shh,2)]);
+          for(var k=0;k<cnt;k++)pos.push([xS,side*ySb,R(zM-k*_shh,2)]);
         });
         var _tk=SUB_KG[SUB[smdl][0]]||40, _ps=Math.ceil(nb/2);
         warn('ℹ G.SUB 플라잉(서브 위·어레이 아래): 좌우 메인 위 서브 컬럼 + 라인어레이 아래로 통합 행잉. 측당 서브 '+_ps+'통(~'+(_tk*_ps)+'kg)+어레이 하중이 한 모터에 걸림 — ArrayCalc에서 각 그룹 Load 합산 확인');
       }else{
         [-1,1].forEach(function(side){
           var cnt=half+((side<0&&nb%2)?1:0);
-          for(var k=0;k<cnt;k++)pos.push([xF,side*yM,R(zs-k*_shh,2)]);
+          for(var k=0;k<cnt;k++)pos.push([xS,side*ySb,R(zs-k*_shh,2)]);
         });
         warn('ℹ G.SUB 플라잉(메인과 함께): 좌우 메인 옆 서브 컬럼 — 라인어레이와 통합 행잉, ArrayCalc에서 카디오이드/정렬 확인');
       }
@@ -629,15 +638,15 @@ function build(db,spec){
       var f0=+(s.efFreq||69)||69, gap=R(C/(4.0*f0),2);
       [-1,1].forEach(function(side){
         var cnt=half+((side<0&&nb%2)?1:0);
-        for(var k=0;k<cnt;k++)pos.push([R(xF-gap*k,2),side*yM,zs,0,R(gap*k/C,6)]);
+        for(var k=0;k<cnt;k++)pos.push([R(xS-gap*k,2),side*ySb,zs,0,R(gap*k/C,6)]);
       });
       warn('ℹ G.SUB 엔드파이어 '+f0+'Hz: 간격 '+gap+'m(c/4f)·전방 딜레이 — 기하 초기값, 주파수별 결과는 ArrayCalc에서 확인');
     }else if((!flown)&&cfg==='arc'&&nb>=3){
-      var Rv=Math.max(8.0,yM*2.0);
+      var Rv=Math.max(8.0,ySb*2.0);
       for(var k3=0;k3<nb;k3++){
-        var y=(nb>1)?(-1+2*k3/(nb-1))*yM:0;
+        var y=(nb>1)?(-1+2*k3/(nb-1))*ySb:0;
         var dly=(Math.sqrt(Rv*Rv+y*y)-Rv)/C;
-        pos.push([xF,R(y,2),zs,0,R(dly,6)]);
+        pos.push([xS,R(y,2),zs,0,R(dly,6)]);
       }
       warn('ℹ G.SUB 아크: 가상 반경 딜레이 커브 반영 — 커버리지는 ArrayCalc에서 확인');
     }else if((!flown)&&cfg==='cardioid'&&nb>=3){
@@ -645,23 +654,23 @@ function build(db,spec){
         var cnt=half+((side<0&&nb%2)?1:0);
         for(var k=0;k<cnt;k++){
           var rev=(k%3===1);
-          pos.push([xF,side*(yM+0.6*k),zs,rev?180:0,0]);
+          pos.push([xS,side*(ySb+0.6*k),zs,rev?180:0,0]);
         }
       });
       warn('ℹ G.SUB 카디오이드: 3통당 1통 후방 반전 배치 — 전용 CSA 셋업·딜레이는 앰프/ArrayCalc에서 설정');
     }else if(!flown){
-      for(var k=0;k<half;k++)pos.push([xF,-yM-0.6*k,zs]);
-      for(k=0;k<half;k++)pos.push([xF, yM+0.6*k,zs]);
-      if(nb%2)pos.push([xF,0,zs]);
+      for(var k=0;k<half;k++)pos.push([xS,-ySb-0.6*k,zs]);
+      for(k=0;k<half;k++)pos.push([xS, ySb+0.6*k,zs]);
+      if(nb%2)pos.push([xS,0,zs]);
     }
-    if(!pos.length)pos=[[xF,0,zs]];
+    if(!pos.length)pos=[[xS,0,zs]];
     // 프론트 서브(무대 앞 분산)
     if(s.fSubOn){
       var fn=Math.trunc(+(s.fSubBox||3))||3;
-      var hw2=Math.max(2.0,yM*0.7);
+      var hw2=Math.max(2.0,ySb*0.7);
       for(var k4=0;k4<fn;k4++){
         var y2=(fn>1)?(-1+2*k4/(fn-1))*hw2:0;
-        pos.push([R(xF+0.6,2),R(y2,2),0]);
+        pos.push([R(xS+0.6,2),R(y2,2),0]);
       }
     }
     b.subStack('G.SUB',ssys,s.amp||'D90',sid,pos,1,s.link||1);
@@ -675,10 +684,10 @@ function build(db,spec){
       var hw=_stw?R(Math.max(2.0,(+_stw)/2.0-0.5),1):R(yM*0.8,1);var ys=[];
       if(nb2>1){for(var i2=0;i2<nb2;i2++)ys.push(R(-hw+2*hw*i2/(nb2-1),2));}else ys=[0];
       var faim=-(Math.abs(+(f.aim||0))||30);
-      b.pointRow('Front fill',psys,f.amp||'D20',pid,ys,1.2,faim,xF,1,f.link||1);
+      b.pointRow('Front fill',psys,f.amp||'D20',pid,ys.map(function(_y){return R(_y+yFf,2);}),1.2,faim,(xFf!==null?xFf:xF),1,f.link||1);
     }else if(f.type==='line'&&LINE[fm2]){
       var nb3=Math.trunc(+(f.box||6));var bx3=applyManualVariants(variants(nb3,LINE[fm2]),LINE[fm2],f.variants);
-      b.lineArray('Front fill',fm2,f.amp||'D80',0,2.5,f.aim||0,bx3,f.splay||Array(nb3).fill(0),'flown',0,0,null,0,0,null,f.link||1,0.3,null,f.rigPts||'2');
+      b.lineArray('Front fill',fm2,f.amp||'D80',yFf,2.5,f.aim||0,bx3,f.splay||Array(nb3).fill(0),'flown',(xFf!==null?xFf:0),0,null,0,0,null,f.link||1,0.3,null,f.rigPts||'2');
     }else warn('프론트필 '+fm2+' 미보유→건너뜀');
   }
   var d=spec.delay||{};
@@ -687,12 +696,12 @@ function build(db,spec){
     if(d.type==='line'&&LINE[dm]){
       var dmnt=d.mount||'flown';var cl2=clampLine(dm,d.box||8,d.splay,dmnt);var nb4=cl2[0],sp2=cl2[1];var bx4=applyManualVariants(variants(nb4,LINE[dm]),LINE[dm],d.variants);
       var ndl=b.sg;
-      var dms_=(d.alignMs!==undefined&&d.alignMs!==null)?R(+d.alignMs,1):R((xD-xF)/343.0*1000+0.3,1);
-      b.lineArray('DELAY L',dm,d.amp||'D40',-yM,ht,d.aim||0,bx4,sp2,dmnt,xD,0,'DELAY',ndl+1,0,null,d.link||1,dms_);
-      b.lineArray('DELAY R',dm,d.amp||'D40', yM,ht,d.aim||0,bx4,sp2,dmnt,xD,0,'DELAY',0,0,-1,d.link||1,dms_);
+      var dms_=(d.alignMs!==undefined&&d.alignMs!==null)?R(+d.alignMs,1):R((xDl-xM)/343.0*1000+0.3,1);
+      b.lineArray('DELAY L',dm,d.amp||'D40',-yDl,ht,d.aim||0,bx4,sp2,dmnt,xDl,0,'DELAY',ndl+1,0,null,d.link||1,dms_);
+      b.lineArray('DELAY R',dm,d.amp||'D40', yDl,ht,d.aim||0,bx4,sp2,dmnt,xDl,0,'DELAY',0,0,-1,d.link||1,dms_);
     }else if(d.type==='point'&&POINT[altOf(dm)]){
       var dm2=altOf(dm);var pu2=POINT[dm2];
-      b.pointRow('Delay',pu2[2],d.amp||'D40',pu2[1],[-yM,yM],ht,d.aim||0,xD,1,d.link||1,(d.alignMs!==undefined&&d.alignMs!==null)?R(+d.alignMs,1):R((xD-xF)/343.0*1000+0.3,1));
+      b.pointRow('Delay',pu2[2],d.amp||'D40',pu2[1],[-yDl,yDl],ht,d.aim||0,xDl,1,d.link||1,(d.alignMs!==undefined&&d.alignMs!==null)?R(+d.alignMs,1):R((xDl-xM)/343.0*1000+0.3,1));
     }else warn('딜레이 '+dm+' 미보유→건너뜀');
   }
   var c=spec.center||{};
@@ -701,10 +710,10 @@ function build(db,spec){
     if(c.type==='line'&&LINE[cm]){
       var cl3=clampLine(cm,c.box||6,c.splay,'flown');var nb5=cl3[0],sp3=cl3[1];var bx5=applyManualVariants(variants(nb5,LINE[cm]),LINE[cm],c.variants);
       var zc=R(+(c.height||zM),1);
-      b.lineArray('CENTER',cm,c.amp||'D80',0,zc,c.aim||0,bx5,sp3,'flown',xF,0,null,0,1,null,c.link||1,0.3,null,c.rigPts||'2');
+      b.lineArray('CENTER',cm,c.amp||'D80',yC,zc,c.aim||0,bx5,sp3,'flown',xC,0,null,0,1,null,c.link||1,0.3,null,c.rigPts||'2');
     }else if(POINT[altOf(cm)]){
       var cm2=altOf(cm);var pu3=POINT[cm2];
-      b.pointRow('Center',pu3[2],c.amp||'D80',pu3[1],[0],R(+(c.height||zM),1),c.aim||0,xF,1,c.link||1);
+      b.pointRow('Center',pu3[2],c.amp||'D80',pu3[1],[yC],R(+(c.height||zM),1),c.aim||0,xC,1,c.link||1);
     }else warn('센터필 '+cm+' 미보유→건너뜀');
   }
   var o=spec.out||{};
@@ -714,11 +723,11 @@ function build(db,spec){
       var omnt=o.mount||'flown';
       var cl4=clampLine(om,o.box||6,o.splay,omnt);var nb6=cl4[0],sp4=cl4[1];var bx6=applyManualVariants(variants(nb6,LINE[om]),LINE[om],o.variants);
       var oh=+(o.horiz||0);var no=b.sg;
-      b.lineArray('OUT L',om,o.amp||'D80',-yO,R(zM-0.5,1),o.tilt||0,bx6,sp4,omnt,xF,oh,'OUT',no+1,0,null,o.link||1,0.3,null,o.rigPts||'2');
-      b.lineArray('OUT R',om,o.amp||'D80', yO,R(zM-0.5,1),o.tilt||0,bx6,sp4,omnt,xF,-oh,'OUT',0,0,-1,o.link||1,0.3,null,o.rigPts||'2');
+      b.lineArray('OUT L',om,o.amp||'D80',-yOt,R(zM-0.5,1),o.tilt||0,bx6,sp4,omnt,xO,oh,'OUT',no+1,0,null,o.link||1,0.3,null,o.rigPts||'2');
+      b.lineArray('OUT R',om,o.amp||'D80', yOt,R(zM-0.5,1),o.tilt||0,bx6,sp4,omnt,xO,-oh,'OUT',0,0,-1,o.link||1,0.3,null,o.rigPts||'2');
     }else if(POINT[altOf(om)]){
       var om2=altOf(om);var pu4=POINT[om2];
-      b.pointRow('Out',pu4[2],o.amp||'D80',pu4[1],[-yO,yO],R(zM-0.5,1),o.tilt||0,xF,1,o.link||1);
+      b.pointRow('Out',pu4[2],o.amp||'D80',pu4[1],[-yOt,yOt],R(zM-0.5,1),o.tilt||0,xO,1,o.link||1);
     }else warn('아웃필 '+om+' 미보유→건너뜀');
   }
   b.flushdev();

@@ -597,6 +597,19 @@ def build(spec,outpath):
     x_delay=R(((vx0-2)+float(_dd)) if _dd else vx0+0.52*(vx1-vx0),1)   # 딜레이 X: 무대앞(메인 위치) 기준 거리 또는 홀 중간
     y_main =R(vy*0.55,1)                    # 메인 L/R 폭
     y_out  =R(vy*0.82,1)                    # 아웃필: 바깥 객석
+    # ── 스피커 위치 오버라이드(spec.spkPos, 베뉴 편집기 드래그) — 없으면 자동 공식 ──
+    _ovp=spec.get('spkPos') or {}
+    def _op(part,key,dflt):
+        p=_ovp.get(part) or {}
+        v=p.get(key)
+        try: return R(float(v),2) if v is not None else dflt
+        except Exception: return dflt
+    xM=_op('main','x',x_front);   yMn=_op('main','y',y_main)
+    xS=_op('sub','x',x_front);    ySb=_op('sub','y',y_main)
+    xFf=_op('front','x',None);    yFf=_op('front','y',0.0)
+    xDl=_op('delay','x',x_delay); yDl=_op('delay','y',y_main)
+    xC=_op('center','x',x_front); yC=_op('center','y',0.0)
+    xO=_op('out','x',x_front);    yOt=_op('out','y',y_out)
     b=Builder()
     b.snapdate=str(spec.get('date') or '')  # 스냅샷 CreatedOn(결정적 — JS와 패리티)
     m=spec.get('main',{}); _combo=False   # 포인트-스택 통합 앰프 여부(서브 별도생성 스킵 판정)
@@ -624,8 +637,8 @@ def build(spec,outpath):
             if _integrated:
                 _subtop={'spk':_integ_spk,'n':_per,'amp':_mgrp_amp,
                          'part':'G.SUB','h':sub_h(SUB[_sm2][0]),'link':_s0.get('link',1)}
-        b.line_array('MAIN L',m['mdl'],_mgrp_amp,-y_main,z_main_top,m.get('tilt',0),bx,sp,mnt,x_front,horiz=mh,gname='MAIN',nxt=_nl+1,link=m.get('link',1),subtop=_subtop,rigpts=m.get('rigPts','2'))
-        b.line_array('MAIN R',m['mdl'],_mgrp_amp, y_main,z_main_top,m.get('tilt',0),bx,sp,mnt,x_front,horiz=-mh,gname='MAIN',ordr=-1,link=m.get('link',1),subtop=(dict(_subtop) if _subtop else None),rigpts=m.get('rigPts','2'))
+        b.line_array('MAIN L',m['mdl'],_mgrp_amp,-yMn,z_main_top,m.get('tilt',0),bx,sp,mnt,xM,horiz=mh,gname='MAIN',nxt=_nl+1,link=m.get('link',1),subtop=_subtop,rigpts=m.get('rigPts','2'))
+        b.line_array('MAIN R',m['mdl'],_mgrp_amp, yMn,z_main_top,m.get('tilt',0),bx,sp,mnt,xM,horiz=-mh,gname='MAIN',ordr=-1,link=m.get('link',1),subtop=(dict(_subtop) if _subtop else None),rigpts=m.get('rigPts','2'))
     elif m.get('type')=='point':
         mm=alt(m.get('mdl'),'point')
         if mm in POINT:
@@ -645,7 +658,7 @@ def build(spec,outpath):
             # ── 포인트-스택 메인 + 서브 ≤4채널 → 앰프 1대 통합. 채널 기준(서브 링크 반영: 서브ch=ceil(통수/링크)) ──
             _cs=spec.get('sub') or {}; _csm=alt(_cs.get('mdl'),'sub') if _cs.get('mdl') else None
             _sbox=int(_cs.get('box') or 0); _slink=max(1,int(_cs.get('link') or 1))
-            _ys=[-y_main,y_main]; _mch=len(_ys)
+            _ys=[-yMn,yMn]; _mch=len(_ys)
             _subch=(-(-_sbox//_slink)) if _sbox else 0   # ceil(통수/링크) = 서브 채널 수
             _mbi=(pid in CH2_IDS); _sbi=(SUB[_csm][1] in CH2_IDS) if (_csm in SUB) else True
             _common=[a for a in AMP_OK.get(pid,[]) if a in AMP_OK.get(SUB[_csm][1],[])] if (_csm in SUB) else []
@@ -653,10 +666,10 @@ def build(spec,outpath):
                     and _common and not _mbi and not _sbi)
             if _combo:
                 _camp=_common[0]   # 공통 앰프(V10P∩V-SUB=D40 우선)
-                b.point_stack_combo('MAIN',psys,pid,_ys,z_pt,m.get('tilt',0),x_front,'G.SUB',SUB[_csm][2],SUB[_csm][1],_sbox,_slink,x_front,sub_h(SUB[_csm][0]),_camp,sym=1)
+                b.point_stack_combo('MAIN',psys,pid,_ys,z_pt,m.get('tilt',0),xM,'G.SUB',SUB[_csm][2],SUB[_csm][1],_sbox,_slink,xM,sub_h(SUB[_csm][0]),_camp,sym=1)
                 warnings.append(f"ℹ 통합 앰프: {m.get('mdl')} {_mch}통 + {_cs.get('mdl')} {_sbox}통(링크1:{_slink}→{_subch}ch) = {_mch+_subch}채널 → {_camp} 1대(측당 탑+서브 A/B·C/D).")
             else:
-                b.point_row('MAIN',psys,m.get('amp','D80'),pid,_ys,z_pt,m.get('tilt',0),x_front,sym=1,link=m.get('link',1))
+                b.point_row('MAIN',psys,m.get('amp','D80'),pid,_ys,z_pt,m.get('tilt',0),xM,sym=1,link=m.get('link',1))
         else: warnings.append(f"메인 {m.get('mdl')} 미보유→건너뜀")
     elif m.get('type')=='line': warnings.append(f"메인 {m.get('mdl')} 미보유→건너뜀")
     s=spec.get('sub',{})
@@ -676,16 +689,16 @@ def build(spec,outpath):
             _shh=sub_h(SUB[smdl][0])
             if fm=='behind':
                 # 메인 라인어레이 뒤(무대쪽)에 별도 플라잉 서브 — 센터 브로드사이드 클러스터
-                xb=R(x_front-2.0,1)
+                xb=R(xS-2.0,1)
                 if nb==1: pos.append((xb,0.0,zs))
                 else:
-                    for k in range(nb): pos.append((xb, R((-1+2*k/(nb-1))*(y_main*0.75),2), zs))
+                    for k in range(nb): pos.append((xb, R((-1+2*k/(nb-1))*(ySb*0.75),2), zs))
                 warnings.append("ℹ G.SUB 플라잉(메인 뒤 별도): 무대 뒤 센터 브로드사이드 서브 어레이 — 정렬·커버리지는 ArrayCalc 확인")
             elif fm=='stacked':
                 # 서브 위 · 라인어레이 아래: 좌우 각 메인 위에 서브 컬럼(트림부터 아래로), 메인은 그 아래로 낮춰 걸림
                 for side in (-1,1):
                     cnt=half+(1 if (side<0 and nb%2) else 0)
-                    for k in range(cnt): pos.append((x_front, side*y_main, R(z_main-k*_shh,2)))
+                    for k in range(cnt): pos.append((xS, side*ySb, R(z_main-k*_shh,2)))
                 _tk=SUB_KG.get(SUB[smdl][0],40)
                 warnings.append(f"ℹ G.SUB 플라잉(서브 위·어레이 아래): 좌우 메인 위 서브 컬럼 + 라인어레이 아래로 통합 행잉. "
                                 f"측당 서브 {(nb+1)//2}통(~{_tk*((nb+1)//2)}kg)+어레이 하중이 한 모터에 걸림 — ArrayCalc에서 각 그룹 Load 합산 확인")
@@ -693,7 +706,7 @@ def build(spec,outpath):
                 # integrated: 좌우 메인과 함께 플라잉 서브 컬럼(라인어레이 옆에 통합 행잉)
                 for side in (-1,1):
                     cnt=half+(1 if (side<0 and nb%2) else 0)
-                    for k in range(cnt): pos.append((x_front, side*y_main, R(zs-k*_shh,2)))
+                    for k in range(cnt): pos.append((xS, side*ySb, R(zs-k*_shh,2)))
                 warnings.append("ℹ G.SUB 플라잉(메인과 함께): 좌우 메인 옆 서브 컬럼 — 라인어레이와 통합 행잉, ArrayCalc에서 카디오이드/정렬 확인")
             _skipGround=True
         else:
@@ -708,15 +721,15 @@ def build(spec,outpath):
             for side in (-1,1):
                 cnt=half+(1 if (side<0 and nb%2) else 0)
                 for k in range(cnt):
-                    pos.append((R(x_front-gap*k,2), side*(y_main), zs, 0, R(gap*k/C,6)))
+                    pos.append((R(xS-gap*k,2), side*(ySb), zs, 0, R(gap*k/C,6)))
             warnings.append(f"ℹ G.SUB 엔드파이어 {f0:g}Hz: 간격 {gap}m(c/4f)·전방 딜레이 — 기하 초기값, 주파수별 결과는 ArrayCalc에서 확인")
         elif (not flown) and cfg=='arc' and nb>=3:
             # 브로드사이드 아크: 무대 앞 일렬 + 가상 반경 딜레이 커브(중앙 0, 바깥쪽으로 갈수록 증가 = 커버 확장)
-            Rv=max(8.0,y_main*2.0)
+            Rv=max(8.0,ySb*2.0)
             for k in range(nb):
-                y=(-1+2*k/(nb-1))*y_main if nb>1 else 0.0
+                y=(-1+2*k/(nb-1))*ySb if nb>1 else 0.0
                 dly=((Rv*Rv+y*y)**0.5 - Rv)/C
-                pos.append((x_front, R(y,2), zs, 0, R(dly,6)))
+                pos.append((xS, R(y,2), zs, 0, R(dly,6)))
             warnings.append("ℹ G.SUB 아크: 가상 반경 딜레이 커브 반영 — 커버리지는 ArrayCalc에서 확인")
         elif (not flown) and cfg=='cardioid' and nb>=3:
             # 카디오이드: 좌/우 클러스터에서 3통당 가운데 1통 후방 반전(180°) — CSA류 셋업은 앰프에서 선택 필요.
@@ -725,21 +738,21 @@ def build(spec,outpath):
                 cnt=half+(1 if (side<0 and nb%2) else 0)
                 for k in range(cnt):
                     rev = (k%3==1)
-                    pos.append((x_front, side*(y_main+0.6*k), zs, 180 if rev else 0, 0))
+                    pos.append((xS, side*(ySb+0.6*k), zs, 180 if rev else 0, 0))
                     idx+=1
             warnings.append("ℹ G.SUB 카디오이드: 3통당 1통 후방 반전 배치 — 전용 CSA 셋업·딜레이는 앰프/ArrayCalc에서 설정")
         elif not flown:
-            for k in range(half): pos.append((x_front,-y_main-0.6*k,zs))
-            for k in range(half): pos.append((x_front, y_main+0.6*k,zs))
-            if nb%2: pos.append((x_front,0.0,zs))
-        if not pos: pos=[(x_front,0.0,zs)]
+            for k in range(half): pos.append((xS,-ySb-0.6*k,zs))
+            for k in range(half): pos.append((xS, ySb+0.6*k,zs))
+            if nb%2: pos.append((xS,0.0,zs))
+        if not pos: pos=[(xS,0.0,zs)]
         # 프론트 서브(무대 앞 분산) — spec.sub.fSubOn/fSubBox 반영
         if s.get('fSubOn'):
             fn=int(s.get('fSubBox',3) or 3)
-            hw=max(2.0,y_main*0.7)
+            hw=max(2.0,ySb*0.7)
             for k in range(fn):
                 y=(-1+2*k/(fn-1))*hw if fn>1 else 0.0
-                pos.append((R(x_front+0.6,2), R(y,2), 0.0))
+                pos.append((R(xS+0.6,2), R(y,2), 0.0))
         b.sub_stack('G.SUB',ssys,s.get('amp','D90'),sid,pos,sym=1,link=s.get('link',1))
     elif s.get('mdl'): warnings.append(f"서브 {s.get('mdl')} 미보유→건너뜀")
     f=spec.get('front',{})
@@ -752,10 +765,10 @@ def build(spec,outpath):
             hw=R(max(2.0,float(_stw)/2.0-0.5),1) if _stw else R(y_main*0.8,1)   # 립 포지션: 무대폭 기준
             ys=[R(-hw+2*hw*i/(nb-1),2) for i in range(nb)] if nb>1 else [0.0]
             faim=-(abs(f.get('aim',0)) or 30)                       # 앞줄 향해 하향
-            b.point_row('Front fill',psys,f.get('amp','D20'),pid,ys,1.2,faim,x_front,sym=1,link=f.get('link',1))
+            b.point_row('Front fill',psys,f.get('amp','D20'),pid,[R(_y+yFf,2) for _y in ys],1.2,faim,(xFf if xFf is not None else x_front),sym=1,link=f.get('link',1))
         elif f.get('type')=='line' and fm in LINE:
             nb=int(f.get('box',6)); nm=LINE[fm]; bx=apply_manual_variants(variants(nb,*nm),nm,f.get('variants'))
-            b.line_array('Front fill',fm,f.get('amp','D80'),0,2.5,f.get('aim',0),bx,f.get('splay') or [0]*nb,link=f.get('link',1),rigpts=f.get('rigPts','2'))
+            b.line_array('Front fill',fm,f.get('amp','D80'),yFf,2.5,f.get('aim',0),bx,f.get('splay') or [0]*nb,ox=(xFf if xFf is not None else 0),link=f.get('link',1),rigpts=f.get('rigPts','2'))
         else: warnings.append(f"프론트필 {fm} 미보유→건너뜀")
     d=spec.get('delay',{})
     if d.get('on'):
@@ -764,11 +777,11 @@ def build(spec,outpath):
             dmnt=d.get('mount','flown'); nb,sp=clamp_line(dm,d.get('box',8),d.get('splay'),dmnt); nm=LINE[dm]; bx=apply_manual_variants(variants(nb,*nm),nm,d.get('variants'))
             _ndl=b.sg
             _am=d.get('alignMs')
-            dms_=R(float(_am),1) if _am is not None else R((x_delay-x_front)/343.0*1000+0.3,1)
-            b.line_array('DELAY L',dm,d.get('amp','D40'),-y_main,ht,d.get('aim',0),bx,sp,dmnt,x_delay,gname='DELAY',nxt=_ndl+1,link=d.get('link',1),dms=dms_)
-            b.line_array('DELAY R',dm,d.get('amp','D40'), y_main,ht,d.get('aim',0),bx,sp,dmnt,x_delay,gname='DELAY',ordr=-1,link=d.get('link',1),dms=dms_)
+            dms_=R(float(_am),1) if _am is not None else R((xDl-xM)/343.0*1000+0.3,1)
+            b.line_array('DELAY L',dm,d.get('amp','D40'),-yDl,ht,d.get('aim',0),bx,sp,dmnt,xDl,gname='DELAY',nxt=_ndl+1,link=d.get('link',1),dms=dms_)
+            b.line_array('DELAY R',dm,d.get('amp','D40'), yDl,ht,d.get('aim',0),bx,sp,dmnt,xDl,gname='DELAY',ordr=-1,link=d.get('link',1),dms=dms_)
         elif d.get('type')=='point' and alt(dm,'point') in POINT:
-            dm2=alt(dm,'point'); _,pid,psys=POINT[dm2]; b.point_row('Delay',psys,d.get('amp','D40'),pid,[-y_main,y_main],ht,d.get('aim',0),x_delay,sym=1,link=d.get('link',1),dms=(R(float(d.get('alignMs')),1) if d.get('alignMs') is not None else R((x_delay-x_front)/343.0*1000+0.3,1)))
+            dm2=alt(dm,'point'); _,pid,psys=POINT[dm2]; b.point_row('Delay',psys,d.get('amp','D40'),pid,[-yDl,yDl],ht,d.get('aim',0),xDl,sym=1,link=d.get('link',1),dms=(R(float(d.get('alignMs')),1) if d.get('alignMs') is not None else R((xDl-xM)/343.0*1000+0.3,1)))
         else: warnings.append(f"딜레이 {dm} 미보유→건너뜀")
     c=spec.get('center',{})
     if c.get('on'):
@@ -776,8 +789,8 @@ def build(spec,outpath):
         if c.get('type')=='line' and cm in LINE:
             nb,sp=clamp_line(cm,c.get('box',6),c.get('splay'),'flown'); nm=LINE[cm]; bx=apply_manual_variants(variants(nb,*nm),nm,c.get('variants'))
             zc=R(float(c.get('height') or z_main),1)
-            b.line_array('CENTER',cm,c.get('amp','D80'),0.0,zc,c.get('aim',0),bx,sp,'flown',x_front,sym=1,link=c.get('link',1),rigpts=c.get('rigPts','2'))
-        elif alt(cm,'point') in POINT: cm2=alt(cm,'point'); _,pid,psys=POINT[cm2]; b.point_row('Center',psys,c.get('amp','D80'),pid,[0.0],R(float(c.get('height') or z_main),1),c.get('aim',0),x_front,sym=1,link=c.get('link',1))
+            b.line_array('CENTER',cm,c.get('amp','D80'),yC,zc,c.get('aim',0),bx,sp,'flown',xC,sym=1,link=c.get('link',1),rigpts=c.get('rigPts','2'))
+        elif alt(cm,'point') in POINT: cm2=alt(cm,'point'); _,pid,psys=POINT[cm2]; b.point_row('Center',psys,c.get('amp','D80'),pid,[yC],R(float(c.get('height') or z_main),1),c.get('aim',0),xC,sym=1,link=c.get('link',1))
         else: warnings.append(f"센터필 {cm} 미보유→건너뜀")
     o=spec.get('out',{})
     if o.get('on'):
@@ -786,9 +799,9 @@ def build(spec,outpath):
             nb,sp=clamp_line(om,o.get('box',6),o.get('splay'),o.get('mount','flown')); nm=LINE[om]; bx=apply_manual_variants(variants(nb,*nm),nm,o.get('variants'))
             oh=float(o.get('horiz',0) or 0); _no=b.sg
             omnt=o.get('mount','flown')
-            b.line_array('OUT L',om,o.get('amp','D80'),-y_out,R(z_main-0.5,1),o.get('tilt',0),bx,sp,omnt,x_front,horiz=oh,gname='OUT',nxt=_no+1,link=o.get('link',1),rigpts=o.get('rigPts','2'))
-            b.line_array('OUT R',om,o.get('amp','D80'), y_out,R(z_main-0.5,1),o.get('tilt',0),bx,sp,omnt,x_front,horiz=-oh,gname='OUT',ordr=-1,link=o.get('link',1),rigpts=o.get('rigPts','2'))
-        elif alt(om,'point') in POINT: om2=alt(om,'point'); _,pid,psys=POINT[om2]; b.point_row('Out',psys,o.get('amp','D80'),pid,[-y_out,y_out],R(z_main-0.5,1),o.get('tilt',0),x_front,sym=1,link=o.get('link',1))
+            b.line_array('OUT L',om,o.get('amp','D80'),-yOt,R(z_main-0.5,1),o.get('tilt',0),bx,sp,omnt,xO,horiz=oh,gname='OUT',nxt=_no+1,link=o.get('link',1),rigpts=o.get('rigPts','2'))
+            b.line_array('OUT R',om,o.get('amp','D80'), yOt,R(z_main-0.5,1),o.get('tilt',0),bx,sp,omnt,xO,horiz=-oh,gname='OUT',ordr=-1,link=o.get('link',1),rigpts=o.get('rigPts','2'))
+        elif alt(om,'point') in POINT: om2=alt(om,'point'); _,pid,psys=POINT[om2]; b.point_row('Out',psys,o.get('amp','D80'),pid,[-yOt,yOt],R(z_main-0.5,1),o.get('tilt',0),xO,sym=1,link=o.get('link',1))
         else: warnings.append(f"아웃필 {om} 미보유→건너뜀")
     b.flushdev()
     b.sql.append("COMMIT;")

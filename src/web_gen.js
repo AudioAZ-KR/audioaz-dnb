@@ -738,12 +738,13 @@ function build(db,spec){
       var cx=R(xF+(+cu.x||0),2), cyv=+cu.y||0, cz=+(cu.z===undefined?5:cu.z), cam=+(cu.aim||0);
       var csym=(cu.sym===undefined?true:!!cu.sym)?1:0, clk=Math.max(1,Math.trunc(+cu.link||1)), camp=cu.amp||'D40';
       if(ctp==='line'&&LINE[cmdl]){
-        var cl9=clampLine(cmdl,cn,cu.splay,'flown'), cn2=cl9[0], csp=cl9[1];
+        var cmt=cu.mount||'flown', crg=String(cu.rigPts||'2'), chz=+(cu.horiz||0);
+        var cl9=clampLine(cmdl,cn,cu.splay,cmt), cn2=cl9[0], csp=cl9[1];
         var bxc=variants(cn2,LINE[cmdl]);
         if(csym){ var nxc=b.sg;
-          b.lineArray(cnm+' L',cmdl,camp,-Math.abs(cyv),cz,cam,bxc,csp,'flown',cx,0,cnm,nxc+1,0,null,clk,0.3,null,'2');
-          b.lineArray(cnm+' R',cmdl,camp, Math.abs(cyv),cz,cam,bxc,csp,'flown',cx,0,cnm,0,0,-1,clk,0.3,null,'2');
-        } else b.lineArray(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,'flown',cx,0,null,0,0,null,clk,0.3,null,'2');
+          b.lineArray(cnm+' L',cmdl,camp,-Math.abs(cyv),cz,cam,bxc,csp,cmt,cx,chz,cnm,nxc+1,0,null,clk,0.3,null,crg);
+          b.lineArray(cnm+' R',cmdl,camp, Math.abs(cyv),cz,cam,bxc,csp,cmt,cx,-chz,cnm,0,0,-1,clk,0.3,null,crg);
+        } else b.lineArray(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,cmt,cx,chz,null,0,0,null,clk,0.3,null,crg);
       } else if(ctp==='sub'&&SUB[cmdl]){
         var su9=SUB[cmdl], pos2=[], half2=Math.floor(cn/2), cz0=Math.max(0,cz);
         if(csym){ for(var k=0;k<half2;k++)pos2.push([cx,-Math.abs(cyv)-0.6*k,cz0]);

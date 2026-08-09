@@ -248,7 +248,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.63</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.64</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -576,7 +576,7 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.63</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.64</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -1870,7 +1870,7 @@
     spec.spkPos=(S.spkPos&&Object.keys(S.spkPos).length)?JSON.parse(JSON.stringify(S.spkPos)):null;
     spec.customs=(S.customs&&S.customs.length)?S.customs.map(function(c){
       var o=JSON.parse(JSON.stringify(c));
-      if(o.type==='line'){ try{ o.splay=splayArray(Math.max(1,Math.trunc(+o.box||1)),effSplay(true,8),msOf(o.mdl)); }catch(e){ o.splay=[]; } }
+      if(o.type==='line'){ try{ o.splay=splayArray(Math.max(1,Math.trunc(+o.box||1)),effSplay(true,+o.splayMax||8),msOf(o.mdl)); }catch(e){ o.splay=[]; } }
       return o; }):null;
     spec.venue=(S.vOn&&S.vPlanes.length)?S.vPlanes.map(function(q){var _w=+(q.w||q.wf||S.width),_yc=+(q.yc||0);return {n:q.n,x:+q.x,d:+q.d,w:_w,wf:+(q.wf!==undefined?q.wf:_w),wb:+(q.wb!==undefined?q.wb:_w),yc:_yc,ycf:+(q.ycf!==undefined?q.ycf:_yc),ycb:+(q.ycb!==undefined?q.ycb:_yc),z0:+q.z0,z1:+q.z1};}):null;
     var isHttp=(location.protocol==='http:'||location.protocol==='https:');
@@ -2736,60 +2736,92 @@
       var _ip='venue'; try{_ip=sessionStorage.getItem('dbsd_pane')||'venue';}catch(e){}
       window.__showPane(_ip);
     }
-    // ── 커스텀 스피커: 탭 재구성 + 페인 렌더 ──
+    // ── 커스텀 스피커: 탭 재구성 + 페인 렌더(메인과 동일 옵션) ──
     var CU_COLS=['#f97316','#06b6d4','#84cc16','#e879f9','#f43f5e','#2dd4bf'];
-    function cuAmpDefault(type,mdl){
-      try{ var L2=(type==='line')?LINE:(type==='sub'?SUB:POINT); var it=byId(L2,mdl); return (it&&it.amp)||'D40'; }catch(e){ return 'D40'; }
-    }
+    function cuList(type){ return (type==='line')?LINE:(type==='sub'?SUB:POINT); }
+    function cuMig(c){ if(c.mount===undefined)c.mount='flown'; if(c.rigPts===undefined)c.rigPts='2';
+      if(c.horiz===undefined)c.horiz=0; if(c.splayMax===undefined)c.splayMax=8; return c; }
     window.__cuRebuild=function(){
       var host=$('cuTabs'), panes=$('cuPanes'); if(!host||!panes)return;
+      (S.customs||[]).forEach(cuMig);
       host.innerHTML=(S.customs||[]).map(function(c,i){
         return '<button type="button" data-pane="cu'+i+'"><span class="tdot" style="background:'+CU_COLS[i%CU_COLS.length]+'"></span>'+String(c.name||('스피커'+(i+1))).replace(/</g,'&lt;')+'</button>';
       }).join('');
       panes.innerHTML=(S.customs||[]).map(function(c,i){
-        function opts(list,sel){ return list.map(function(m){ return '<option value="'+m.id+'"'+(m.id===sel?' selected':'')+'>'+m.id+'</option>'; }).join(''); }
-        var mlist=(c.type==='line')?LINE:(c.type==='sub'?SUB:POINT);
+        var isL=(c.type==='line'), isS=(c.type==='sub'), sym=(c.sym!==false);
+        function seg3(key,items){ return '<div class="seg" data-cuseg="'+key+'" data-ci="'+i+'" role="group">'
+          +items.map(function(it){ return '<button type="button" data-v="'+it[0]+'" aria-pressed="'+(String(c[key])===it[0]?'true':'false')+'">'+it[1]+(it[2]?'<span class="s">'+it[2]+'</span>':'')+'</button>'; }).join('')+'</div>'; }
         return '<div class="grp" data-pane="cu'+i+'">'
           +'<h2><span class="l"><span class="dot" style="background:'+CU_COLS[i%CU_COLS.length]+'"></span>커스텀 스피커</span></h2>'
-          +'<div class="cuField"><span>이름</span><input data-ck="name" data-ci="'+i+'" value="'+String(c.name||'').replace(/"/g,'&quot;')+'"></div>'
-          +'<div class="cuField"><span>타입</span><select data-ck="type" data-ci="'+i+'">'
-            +'<option value="point"'+(c.type==='point'?' selected':'')+'>포인트</option>'
-            +'<option value="line"'+(c.type==='line'?' selected':'')+'>라인어레이</option>'
-            +'<option value="sub"'+(c.type==='sub'?' selected':'')+'>서브</option></select></div>'
-          +'<div class="cuField"><span>모델</span><select data-ck="mdl" data-ci="'+i+'">'+opts(mlist,c.mdl)+'</select></div>'
-          +'<div class="cuField"><span>통수 · 링크</span><div class="cuRow3" style="grid-template-columns:1fr 1fr">'
-            +'<input type="number" min="1" max="24" data-ck="box" data-ci="'+i+'" value="'+(c.box||1)+'">'
-            +'<input type="number" min="1" max="4" data-ck="link" data-ci="'+i+'" value="'+(c.link||1)+'" title="채널당 통수"></div></div>'
-          +'<div class="cuField"><span>앰프</span><input data-ck="amp" data-ci="'+i+'" value="'+(c.amp||'D40')+'" title="모델 미지원이면 생성 시 자동 교정"></div>'
-          +'<div class="cuField"><span>배치</span><label style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink-2)"><input type="checkbox" data-ck="sym" data-ci="'+i+'"'+(c.sym!==false?' checked':'')+'> L/R 대칭 쌍</label></div>'
-          +'<div class="cuField"><span>위치 X·Y·Z (m)</span><div class="cuRow3">'
+          +'<label class="f"><span class="flab">이름 (ArrayCalc 그룹명)</span><input data-ck="name" data-ci="'+i+'" value="'+String(c.name||'').replace(/"/g,'&quot;')+'"></label>'
+          +'<label class="f" style="margin-top:2px"><span class="flab">타입</span>'+seg3('type',[['point','포인트','point'],['line','라인어레이','line'],['sub','서브','sub']])+'</label>'
+          +'<label class="f"><span class="flab">모델</span><select data-ck="mdl" data-ci="'+i+'" id="cuMdl'+i+'"></select></label>'
+          +'<div class="row-amp">'
+          +'<label class="f"><span class="flab">앰프</span><select data-ck="amp" data-ci="'+i+'" id="cuAmp'+i+'"></select></label>'
+          +'<label class="f"><span class="flab">앰프 링크 · 채널(쌍)당 통수 <span class="fval" id="cuLinkMax'+i+'"></span></span><select data-ck="link" data-ci="'+i+'" id="cuLink'+i+'"></select></label>'
+          +'<label class="f"><span class="flab">통수'+(sym?'/측':'')+'</span><input type="number" data-ck="box" data-ci="'+i+'" min="1" max="24" value="'+(c.box||1)+'"></label>'
+          +'</div>'
+          +(isL?('<label class="f"><span class="flab">설치</span>'+seg3('mount',[['flown','플라잉','flown'],['stack','그라운드 스택','stack']])+'</label>'):'')
+          +(isS?'':('<label class="f" style="margin-top:2px"><span class="flab">'+(isL?'어레이 틸트 · 조준(하향+)':'틸트 · 조준(하향+)')+' <span class="fval"><span id="cuAimV'+i+'">'+(c.aim||0)+'</span>°</span></span>'
+            +'<input type="range" data-ck="aim" data-ci="'+i+'" min="-30" max="60" step="1" value="'+(c.aim||0)+'"></label>'))
+          +(isL?('<label class="f"><span class="flab">스플레이 · 하단 최대 <span class="fval"><span id="cuSplV'+i+'">'+c.splayMax+'</span>°</span></span>'
+            +'<input type="range" data-ck="splayMax" data-ci="'+i+'" min="1" max="10" step="1" value="'+c.splayMax+'"></label>'):'')
+          +(isL&&c.mount==='flown'?('<label class="f"><span class="flab">리깅 포인트</span>'+seg3('rigPts',[['2','2점','2 motors'],['1','1점','1 motor·틸트고정']])+'</label>'):'')
+          +(sym&&!isS?('<label class="f"><span class="flab">좌우 방향 · 토우(안쪽 +) <span class="fval"><span id="cuHzV'+i+'">'+(c.horiz||0)+'</span>°</span></span>'
+            +'<input type="range" data-ck="horiz" data-ci="'+i+'" min="-20" max="20" step="1" value="'+(c.horiz||0)+'"></label>'):'')
+          +'<label class="f" style="margin-top:4px"><span class="flab">배치</span><label style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink-2);padding:4px 0"><input type="checkbox" data-ck="sym" data-ci="'+i+'"'+(sym?' checked':'')+'> L/R 대칭 쌍</label></label>'
+          +'<label class="f"><span class="flab">위치 X깊이 · Y좌우 · Z높이 (m)</span><div class="cuRow3">'
             +'<input type="number" step="any" data-ck="x" data-ci="'+i+'" value="'+(c.x||0)+'" title="무대앞 기준 깊이">'
-            +'<input type="number" step="any" data-ck="y" data-ci="'+i+'" value="'+(c.y||0)+'" title="대칭=±폭 · 단일=오프셋">'
-            +'<input type="number" step="any" data-ck="z" data-ci="'+i+'" value="'+(c.z===undefined?4:c.z)+'" title="높이(서브=바닥)"></div></div>'
-          +'<div class="cuField"><span>조준각(°)</span><input type="number" step="any" data-ck="aim" data-ci="'+i+'" value="'+(c.aim||0)+'" title="라인=상단 틸트(하향+) · 포인트=틸트(하향+)"></div>'
+            +'<input type="number" step="any" data-ck="y" data-ci="'+i+'" value="'+(c.y||0)+'" title="'+(sym?'±대칭 폭':'좌우 오프셋')+'">'
+            +'<input type="number" step="any" data-ck="z" data-ci="'+i+'" value="'+(c.z===undefined?4:c.z)+'" title="'+(isS?'서브=바닥 0':'상단 높이')+'"></div></label>'
           +'<button type="button" class="cuDel" data-cudel="'+i+'">이 스피커 삭제</button>'
           +'</div>';
       }).join('');
+      // 모델·앰프·링크 옵션 채우기 (메인과 동일한 ampOpts/호환 목록)
+      (S.customs||[]).forEach(function(c,i){
+        var list=cuList(c.type), mSel=$('cuMdl'+i); if(!mSel)return;
+        opts(mSel,list,c.mdl); if(!byId(list,c.mdl)||byId(list,c.mdl).id!==c.mdl){ c.mdl=mSel.value; }
+        var model=byId(list,c.mdl);
+        ampOpts($('cuAmp'+i),model,c.amp); c.amp=$('cuAmp'+i).value;
+        // 링크(메인 linkOpts와 동일 규칙)
+        var lSel=$('cuLink'+i), ch2=!!CH2_MODELS[c.mdl], mx=maxLinkFor(model,c.mdl);
+        var cur=Math.max(1,Math.min(+c.link||1,mx));
+        var mv=$('cuLinkMax'+i); if(mv)mv.textContent=ch2?(mx>1?'운용 모드 선택':'바이앰프 · 1:1 전용'):(mx>1?'매뉴얼 최대 1:'+mx:'이 모델 최대 1:1');
+        lSel.innerHTML='';
+        if(ch2&&mx>1){ lSel.innerHTML='<option value="1">ArrayProcessing — 채널쌍당 1통</option><option value="2">Line/Arc — 채널쌍당 2통 · AP 불가</option>'; }
+        else if(ch2){ lSel.innerHTML='<option value="1">1:1 (바이앰프 전용)</option>'; }
+        else { for(var li=1;li<=mx;li++){ var o=document.createElement('option'); o.value=li; o.textContent='1:'+li+(li===1?' (채널당 1통)':' (채널당 '+li+'통 병렬)'); lSel.appendChild(o); } }
+        lSel.disabled=(mx<=1); lSel.value=cur; c.link=cur;
+      });
     };
     var addBtn=$('ctabAdd');
     if(addBtn) addBtn.addEventListener('click',function(){
       var i=S.customs.length;
-      S.customs.push({name:'스피커 '+(i+1),type:'point',mdl:'E8',box:2,link:1,amp:'D20',sym:true,x:5,y:6,z:4,aim:0});
+      S.customs.push(cuMig({name:'스피커 '+(i+1),type:'point',mdl:'E8',box:2,link:1,amp:'D20',sym:true,x:5,y:6,z:4,aim:0}));
       window.__cuRebuild(); window.__showPane('cu'+i); render();
     });
     var panesEl=$('cuPanes');
     if(panesEl){
       panesEl.addEventListener('input',function(e){ var t=e.target,ci=+t.dataset.ci,k=t.dataset.ck; var c=S.customs[ci]; if(!c||!k)return;
-        if(k==='sym'){ c.sym=t.checked; }
-        else if(k==='name'){ c.name=t.value; var tb=document.querySelector('#cuTabs button[data-pane="cu'+ci+'"]'); if(tb)tb.childNodes[1].nodeValue=t.value||('스피커'+(ci+1)); }
-        else if(k==='type'||k==='mdl'||k==='amp'){ c[k]=t.value;
-          if(k==='type'){ var L3=(t.value==='line')?LINE:(t.value==='sub'?SUB:POINT); c.mdl=L3[0].id; c.amp=cuAmpDefault(t.value,c.mdl); window.__cuRebuild(); window.__showPane('cu'+ci); }
-          if(k==='mdl'){ c.amp=cuAmpDefault(c.type,c.mdl); var ai=document.querySelector('#cuPanes input[data-ck="amp"][data-ci="'+ci+'"]'); if(ai)ai.value=c.amp; } }
-        else { c[k]=parseFloat(t.value)||0; }
+        if(k==='sym'){ c.sym=t.checked; window.__cuRebuild(); window.__showPane('cu'+ci); render(); return; }
+        if(k==='name'){ c.name=t.value; var tb=document.querySelector('#cuTabs button[data-pane="cu'+ci+'"]'); if(tb&&tb.childNodes[1])tb.childNodes[1].nodeValue=t.value||('스피커'+(ci+1)); render(); return; }
+        if(k==='mdl'){ c.mdl=t.value; c.amp=''; window.__cuRebuild(); window.__showPane('cu'+ci); render(); return; }
+        if(k==='amp'||k==='link'){ c[k]=(k==='link')?(parseInt(t.value,10)||1):t.value; render(); return; }
+        c[k]=parseFloat(t.value)||0;
+        if(k==='aim'){ var av=$('cuAimV'+ci); if(av)av.textContent=c.aim; }
+        if(k==='splayMax'){ var sv=$('cuSplV'+ci); if(sv)sv.textContent=c.splayMax; }
+        if(k==='horiz'){ var hv=$('cuHzV'+ci); if(hv)hv.textContent=c.horiz; }
         render();
       });
-      panesEl.addEventListener('click',function(e){ var d=e.target.dataset.cudel; if(d===undefined)return;
-        S.customs.splice(+d,1); window.__cuRebuild(); window.__showPane('venue'); render(); });
+      panesEl.addEventListener('click',function(e){
+        var d=e.target.dataset.cudel;
+        if(d!==undefined){ S.customs.splice(+d,1); window.__cuRebuild(); window.__showPane('venue'); render(); return; }
+        var sb=e.target.closest('.seg[data-cuseg] button'); if(!sb)return;
+        var segEl=sb.closest('.seg'), ci2=+segEl.dataset.ci, key=segEl.dataset.cuseg, c2=S.customs[ci2]; if(!c2)return;
+        c2[key]=(key==='rigPts')?sb.dataset.v:sb.dataset.v;
+        if(key==='type'){ var L4=cuList(c2.type); c2.mdl=L4[0].id; c2.amp=''; }
+        window.__cuRebuild(); window.__showPane('cu'+ci2); render();
+      });
     }
     window.__cuRebuild();
   })();
@@ -3758,12 +3790,13 @@ function build(db,spec){
       var cx=R(xF+(+cu.x||0),2), cyv=+cu.y||0, cz=+(cu.z===undefined?5:cu.z), cam=+(cu.aim||0);
       var csym=(cu.sym===undefined?true:!!cu.sym)?1:0, clk=Math.max(1,Math.trunc(+cu.link||1)), camp=cu.amp||'D40';
       if(ctp==='line'&&LINE[cmdl]){
-        var cl9=clampLine(cmdl,cn,cu.splay,'flown'), cn2=cl9[0], csp=cl9[1];
+        var cmt=cu.mount||'flown', crg=String(cu.rigPts||'2'), chz=+(cu.horiz||0);
+        var cl9=clampLine(cmdl,cn,cu.splay,cmt), cn2=cl9[0], csp=cl9[1];
         var bxc=variants(cn2,LINE[cmdl]);
         if(csym){ var nxc=b.sg;
-          b.lineArray(cnm+' L',cmdl,camp,-Math.abs(cyv),cz,cam,bxc,csp,'flown',cx,0,cnm,nxc+1,0,null,clk,0.3,null,'2');
-          b.lineArray(cnm+' R',cmdl,camp, Math.abs(cyv),cz,cam,bxc,csp,'flown',cx,0,cnm,0,0,-1,clk,0.3,null,'2');
-        } else b.lineArray(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,'flown',cx,0,null,0,0,null,clk,0.3,null,'2');
+          b.lineArray(cnm+' L',cmdl,camp,-Math.abs(cyv),cz,cam,bxc,csp,cmt,cx,chz,cnm,nxc+1,0,null,clk,0.3,null,crg);
+          b.lineArray(cnm+' R',cmdl,camp, Math.abs(cyv),cz,cam,bxc,csp,cmt,cx,-chz,cnm,0,0,-1,clk,0.3,null,crg);
+        } else b.lineArray(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,cmt,cx,chz,null,0,0,null,clk,0.3,null,crg);
       } else if(ctp==='sub'&&SUB[cmdl]){
         var su9=SUB[cmdl], pos2=[], half2=Math.floor(cn/2), cz0=Math.max(0,cz);
         if(csym){ for(var k=0;k<half2;k++)pos2.push([cx,-Math.abs(cyv)-0.6*k,cz0]);

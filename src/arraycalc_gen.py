@@ -812,14 +812,15 @@ def build(spec,outpath):
             cam=float(cu.get('aim',0) or 0); csym=1 if cu.get('sym',True) else 0
             clk=max(1,int(cu.get('link',1) or 1)); camp=cu.get('amp','D40')
             if ctp=='line' and cmdl in LINE:
-                cn2,csp=clamp_line(cmdl,cn,cu.get('splay'),'flown')
+                cmt=cu.get('mount','flown'); crg=str(cu.get('rigPts','2')); chz=float(cu.get('horiz') or 0)
+                cn2,csp=clamp_line(cmdl,cn,cu.get('splay'),cmt)
                 bxc=variants(cn2,*LINE[cmdl])
                 if csym:
                     nxc=b.sg
-                    b.line_array(cnm+' L',cmdl,camp,-abs(cyv),cz,cam,bxc,csp,'flown',cx,gname=cnm,nxt=nxc+1,link=clk)
-                    b.line_array(cnm+' R',cmdl,camp, abs(cyv),cz,cam,bxc,csp,'flown',cx,gname=cnm,ordr=-1,link=clk)
+                    b.line_array(cnm+' L',cmdl,camp,-abs(cyv),cz,cam,bxc,csp,cmt,cx,horiz=chz,gname=cnm,nxt=nxc+1,link=clk,rigpts=crg)
+                    b.line_array(cnm+' R',cmdl,camp, abs(cyv),cz,cam,bxc,csp,cmt,cx,horiz=-chz,gname=cnm,ordr=-1,link=clk,rigpts=crg)
                 else:
-                    b.line_array(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,'flown',cx,link=clk)
+                    b.line_array(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,cmt,cx,horiz=chz,link=clk,rigpts=crg)
             elif ctp=='sub' and cmdl in SUB:
                 _,sid2,ssys2=SUB[cmdl]; pos2=[]; half2=cn//2; cz0=max(0.0,cz)
                 if csym:

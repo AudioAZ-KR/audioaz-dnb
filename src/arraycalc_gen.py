@@ -803,6 +803,42 @@ def build(spec,outpath):
             b.line_array('OUT R',om,o.get('amp','D80'), yOt,R(z_main-0.5,1),o.get('tilt',0),bx,sp,omnt,xO,horiz=-oh,gname='OUT',ordr=-1,link=o.get('link',1),rigpts=o.get('rigPts','2'))
         elif alt(om,'point') in POINT: om2=alt(om,'point'); _,pid,psys=POINT[om2]; b.point_row('Out',psys,o.get('amp','D80'),pid,[-yOt,yOt],R(z_main-0.5,1),o.get('tilt',0),xO,sym=1,link=o.get('link',1))
         else: warnings.append(f"아웃필 {om} 미보유→건너뜀")
+    # ── 커스텀 스피커 그룹(spec.customs) — 탭 + 로 추가한 자유 스피커 ──
+    for ci,cu in enumerate(spec.get('customs') or []):
+        try:
+            cnm=str(cu.get('name') or f'CUSTOM {ci+1}')[:24].replace("'","")
+            ctp=cu.get('type','point'); cmdl=cu.get('mdl'); cn=max(1,int(cu.get('box',1) or 1))
+            cx=R(x_front+float(cu.get('x') or 0),2); cyv=float(cu.get('y') or 0); _zv=cu.get('z'); cz=float(5 if _zv is None else _zv)
+            cam=float(cu.get('aim',0) or 0); csym=1 if cu.get('sym',True) else 0
+            clk=max(1,int(cu.get('link',1) or 1)); camp=cu.get('amp','D40')
+            if ctp=='line' and cmdl in LINE:
+                cn2,csp=clamp_line(cmdl,cn,cu.get('splay'),'flown')
+                bxc=variants(cn2,*LINE[cmdl])
+                if csym:
+                    nxc=b.sg
+                    b.line_array(cnm+' L',cmdl,camp,-abs(cyv),cz,cam,bxc,csp,'flown',cx,gname=cnm,nxt=nxc+1,link=clk)
+                    b.line_array(cnm+' R',cmdl,camp, abs(cyv),cz,cam,bxc,csp,'flown',cx,gname=cnm,ordr=-1,link=clk)
+                else:
+                    b.line_array(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,'flown',cx,link=clk)
+            elif ctp=='sub' and cmdl in SUB:
+                _,sid2,ssys2=SUB[cmdl]; pos2=[]; half2=cn//2; cz0=max(0.0,cz)
+                if csym:
+                    for k in range(half2): pos2.append((cx,-abs(cyv)-0.6*k,cz0))
+                    for k in range(half2): pos2.append((cx, abs(cyv)+0.6*k,cz0))
+                    if cn%2: pos2.append((cx,0.0,cz0))
+                else:
+                    for k in range(cn): pos2.append((cx,cyv+0.6*k,cz0))
+                b.sub_stack(cnm,ssys2,camp,sid2,pos2,sym=csym,link=clk)
+            else:
+                cm2=cmdl if cmdl in POINT else alt(cmdl,'point')
+                if cm2 in POINT:
+                    _,pid2,psys2=POINT[cm2]
+                    ys2=([-abs(cyv),abs(cyv)] if csym else [cyv])
+                    b.point_row(cnm,psys2,camp,pid2,ys2,cz,cam,cx,sym=csym,link=clk)
+                else:
+                    warnings.append(f"커스텀 {cnm}: 모델 {cmdl} 미보유→건너뜀")
+        except Exception as e:
+            warnings.append(f"커스텀 그룹 실패({cu.get('name','?')}): {e}")
     b.flushdev()
     b.sql.append("COMMIT;")
     cur.executescript("\n".join(b.sql)); con.commit()

@@ -730,6 +730,36 @@ function build(db,spec){
       b.pointRow('Out',pu4[2],o.amp||'D80',pu4[1],[-yOt,yOt],R(zM-0.5,1),o.tilt||0,xO,1,o.link||1);
     }else warn('아웃필 '+om+' 미보유→건너뜀');
   }
+  // ── 커스텀 스피커 그룹(spec.customs) — 탭 + 로 추가한 자유 스피커 ──
+  (spec.customs||[]).forEach(function(cu,ci){
+    try{
+      var cnm=String(cu.name||('CUSTOM '+(ci+1))).slice(0,24).replace(/'/g,'');
+      var ctp=cu.type||'point', cmdl=cu.mdl, cn=Math.max(1,Math.trunc(+cu.box||1));
+      var cx=R(xF+(+cu.x||0),2), cyv=+cu.y||0, cz=+(cu.z===undefined?5:cu.z), cam=+(cu.aim||0);
+      var csym=(cu.sym===undefined?true:!!cu.sym)?1:0, clk=Math.max(1,Math.trunc(+cu.link||1)), camp=cu.amp||'D40';
+      if(ctp==='line'&&LINE[cmdl]){
+        var cl9=clampLine(cmdl,cn,cu.splay,'flown'), cn2=cl9[0], csp=cl9[1];
+        var bxc=variants(cn2,LINE[cmdl]);
+        if(csym){ var nxc=b.sg;
+          b.lineArray(cnm+' L',cmdl,camp,-Math.abs(cyv),cz,cam,bxc,csp,'flown',cx,0,cnm,nxc+1,0,null,clk,0.3,null,'2');
+          b.lineArray(cnm+' R',cmdl,camp, Math.abs(cyv),cz,cam,bxc,csp,'flown',cx,0,cnm,0,0,-1,clk,0.3,null,'2');
+        } else b.lineArray(cnm,cmdl,camp,cyv,cz,cam,bxc,csp,'flown',cx,0,null,0,0,null,clk,0.3,null,'2');
+      } else if(ctp==='sub'&&SUB[cmdl]){
+        var su9=SUB[cmdl], pos2=[], half2=Math.floor(cn/2), cz0=Math.max(0,cz);
+        if(csym){ for(var k=0;k<half2;k++)pos2.push([cx,-Math.abs(cyv)-0.6*k,cz0]);
+          for(k=0;k<half2;k++)pos2.push([cx, Math.abs(cyv)+0.6*k,cz0]);
+          if(cn%2)pos2.push([cx,0,cz0]); }
+        else { for(var k2=0;k2<cn;k2++)pos2.push([cx,cyv+0.6*k2,cz0]); }
+        b.subStack(cnm,su9[2],camp,su9[1],pos2,csym,clk);
+      } else {
+        var cm2=POINT[cmdl]?cmdl:altOf(cmdl);
+        if(POINT[cm2]){ var pu9=POINT[cm2];
+          var ys2=csym?[-Math.abs(cyv),Math.abs(cyv)]:[cyv];
+          b.pointRow(cnm,pu9[2],camp,pu9[1],ys2,cz,cam,cx,csym,clk);
+        } else warn('커스텀 '+cnm+': 모델 '+cmdl+' 미보유→건너뜀');
+      }
+    }catch(e){ warn('커스텀 그룹 실패('+(cu.name||'?')+'): '+e); }
+  });
   b.flushdev();
   b.sql.push('COMMIT;');
   db.exec(b.sql.join('\n'));

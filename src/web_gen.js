@@ -685,7 +685,7 @@ function build(db,spec){
       var _stw=(spec._state||{}).stageW;
       var hw=_stw?R(Math.max(2.0,(+_stw)/2.0-0.5),1):R(yM*0.8,1);var ys=[];
       if(nb2>1){for(var i2=0;i2<nb2;i2++)ys.push(R(-hw+2*hw*i2/(nb2-1),2));}else ys=[0];
-      var faim=-(Math.abs(+(f.aim||0))||30);
+      var faim=-((+f.aim||0)!==0?(+f.aim):30);   // +=하향/−=상향(부호 존중), 0=기본 30↓
       b.pointRow('Front fill',psys,f.amp||'D20',pid,ys.map(function(_y){return R(_y+yFf,2);}),R(+(f.height||1.2),2),faim,(xFf!==null?xFf:xF),1,f.link||1);
     }else if(f.type==='line'&&LINE[fm2]){
       var nb3=Math.trunc(+(f.box||6));var bx3=applyManualVariants(variants(nb3,LINE[fm2]),LINE[fm2],f.variants);

@@ -765,7 +765,7 @@ def build(spec,outpath):
             _stw=(spec.get('_state') or {}).get('stageW')
             hw=R(max(2.0,float(_stw)/2.0-0.5),1) if _stw else R(y_main*0.8,1)   # 립 포지션: 무대폭 기준
             ys=[R(-hw+2*hw*i/(nb-1),2) for i in range(nb)] if nb>1 else [0.0]
-            faim=-(abs(f.get('aim',0)) or 30)                       # 앞줄 향해 하향
+            _fa=float(f.get('aim') or 0); faim=-(_fa if _fa else 30.0)   # +=하향/−=상향(부호 존중), 0=기본 30↓
             b.point_row('Front fill',psys,f.get('amp','D20'),pid,[R(_y+yFf,2) for _y in ys],R(float(f.get('height') or 1.2),2),faim,(xFf if xFf is not None else x_front),sym=1,link=f.get('link',1))
         elif f.get('type')=='line' and fm in LINE:
             nb=int(f.get('box',6)); nm=LINE[fm]; bx=apply_manual_variants(variants(nb,*nm),nm,f.get('variants'))

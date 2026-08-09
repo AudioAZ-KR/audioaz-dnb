@@ -251,7 +251,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.69</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.70</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -582,7 +582,7 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.69</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.70</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -820,6 +820,7 @@
   // fixed nominal dispersion [horizontal, vertical] per point-source model (landscape)
   function disp(id){var D={V10P:[110,40],V7P:[75,40],Y10P:[110,40],Y7P:[75,40],U3:[100,65],U5:[90,60],U7:[80,55],E12:[80,50],E12D:[80,50],E8:[90,50],E6:[100,55],E5:[100,55],E4:[110,60],M4:[70,50],M2:[90,40],M6:[80,50],'44S':[90,30],'24S':[75,45],'8S':[90,50],'5S':[100,55],Q7:[80,40],Q10:[90,50]};return D[id]||[90,50];}
   function effDisp(id,rot){var d=disp(id);return rot?[d[1],d[0]]:[d[0],d[1]];}
+  function effFAim(){ var a=+S.fAim||0; if(S.fType==='line')return a; return a||30; }   // 프론트필 유효각(+아래): 포인트 0=기본 30↓ — 생성기와 동일
   function ampsFor(totalBoxes,model){ var ch=AMPCH[ (model&&model.amp)||'D80']||4;
     // use selected amp channels
     return {n:0,ch:ch}; }
@@ -1011,9 +1012,9 @@
       _sfL.push({t:'프론트서브 ×'+S.fSubBox,c:vio}); }
     // front fill — radiation aimed down at front rows
     if(S.fOn){ var fx=X(Math.max(0.2,0.7+_se.fx)),fy=Y(Math.max(0.2,(+S.fHeight||1.2))),fvh=effDisp(S.fMdl,S.fRot)[1]/2;
-      cover(fx,fy,S.fAim-fvh,S.fAim+fvh,good,0.15);
-      ray(fx,fy,S.fAim-fvh,good,0.5,1);ray(fx,fy,S.fAim+fvh,good,0.5,1);ray(fx,fy,S.fAim,good,0.7,1.2);
-      x.fillStyle=good;x.fillRect(fx-3,fy-4,8,7); _sfL.push({t:'프론트필 '+S.fMdl+' ×'+S.fBox+' ↓'+S.fAim+'°',c:good}); }
+      var _fe=effFAim(); cover(fx,fy,_fe-fvh,_fe+fvh,good,0.15);
+      ray(fx,fy,_fe-fvh,good,0.5,1);ray(fx,fy,_fe+fvh,good,0.5,1);ray(fx,fy,_fe,good,0.7,1.2);
+      x.fillStyle=good;x.fillRect(fx-3,fy-4,8,7); _sfL.push({t:'프론트필 '+S.fMdl+' ×'+S.fBox+' '+(_fe>=0?'↓'+_fe:'↑'+(-_fe))+'°',c:good}); }
     // delay — per-box radiation (line) or cone (point), like the main array
     if(S.dOn){ var dox=X(Math.max(1,Math.min(_se.dx||(+S.dDist||S.depth*0.6),S.depth)));   // 딜레이 X: spkPos 오버라이드>거리설정
       if(S.dtype==='line' && S.dMount==='stack'){
@@ -1448,7 +1449,7 @@
     $('mainAuto').style.display=S.maintype==='auto'?'inline-block':'none';
     if(S.mTiltAuto){ S.mTilt=autoTilt(); }
     $('mTilt').value=S.mTilt; $('mTiltV').textContent=S.mTilt; $('mTiltAuto').style.display=S.mTiltAuto?'inline-block':'none';
-    $('fAimV').textContent=S.fAim; $('dAimV').textContent=S.dAim;
+    $('fAimV').textContent=(S.fType!=='line'&&!(+S.fAim))?'30↓(자동)':S.fAim; $('dAimV').textContent=S.dAim;
     if(S.sBoxAuto){ S.sBox=recSub(); $('sBox').value=S.sBox; } $('sBoxAuto').style.display=S.sBoxAuto?'inline-block':'none';
     if(S.fSubAuto){ S.fSubOn=(S.spl>=104||S.program==='concert'||(S.env==='outdoor'&&S.spl>=100)); $('fSubOn').checked=S.fSubOn;
       S.fSubBox=clamp(Math.round(S.stageW/3),2,12); }
@@ -1563,7 +1564,7 @@
       drawRig();
     } else rp.style.display='none';
     // front fill signed aim + fixed dispersion + plan view
-    $('fAimV').textContent=(S.fAim>=0?S.fAim+'°↓':(-S.fAim)+'°↑');
+    $('fAimV').textContent=(S.fType!=='line'&&!(+S.fAim))?'30°↓(자동)':(S.fAim>=0?S.fAim+'°↓':(-S.fAim)+'°↑');
     var fd=effDisp(S.fMdl,S.fRot); $('fDispV').textContent=fd[0]+'°×'+fd[1]+'° (H×V)';
     $('planWrap').style.display='block';
     $('planSum').textContent='무대폭 '+S.stageW+'m · 프론트필 '+(S.fOn?fd[0]+'°×'+S.fBox:'off');
@@ -2262,7 +2263,7 @@
       if(S.fOn){ var fx0=op('front','x',null), fy0=op('front','y',0), fH0=num(S.fHeight,(S.fType==='line'?2.5:1.2));
         if(S.fType==='line'){ push({label:'F',part:'front',x:(fx0===null?0:fx0),y:fy0,bx:(fx0===null?0:fx0),by:fy0,z0:fH0,z1:Math.max(0.2,fH0-num(S.fBox,6)*famH(S.fMdl)),c:'#22c55e',kind:'front',g:{type:'line',n:num(S.fBox,6),ch:famH(S.fMdl),tilt:num(S.fAim,0),horiz:0,mount:'flown',mdl:S.fMdl,la:laData(S.fMdl,num(S.fBox,6),num(S.fAim,0),'flown',true,8,'2',S.fVar),hd:90}}); }
         else { var fb=num(S.fBox,6), hwf=Math.max(2,(num(S.stageW,12)/2)-0.5), fxx=(fx0===null?xF:fx0);
-          for(var j=0;j<fb;j++){ var yf=fy0+(fb>1?(-1+2*j/(fb-1)):0)*hwf; push({label:'F',part:'front',x:fxx,y:yf,bx:fxx,by:fy0,z0:fH0,z1:fH0,c:'#22c55e',kind:'front',g:{type:'point',n:1,ch:0.25,tilt:-Math.abs(num(S.fAim,0)||30),horiz:0,mdl:S.fMdl,hd:pdisp(S.fMdl)[0],vd:pdisp(S.fMdl)[1]}}); } } }
+          for(var j=0;j<fb;j++){ var yf=fy0+(fb>1?(-1+2*j/(fb-1)):0)*hwf; push({label:'F',part:'front',x:fxx,y:yf,bx:fxx,by:fy0,z0:fH0,z1:fH0,c:'#22c55e',kind:'front',g:{type:'point',n:1,ch:0.25,tilt:-(num(S.fAim,0)||30),horiz:0,mdl:S.fMdl,hd:pdisp(S.fMdl)[0],vd:pdisp(S.fMdl)[1]}}); } } }
       if(S.dOn){ var dh=num(S.dHeight,3), xDd=(xDl===null)?Math.round((xF+num(S.dDist,22))*10)/10:xDl;
         var dG={type:(S.dtype==='line'?'line':'point'),n:num(S.dBox,6),ch:famH(S.dMdl),tilt:num(S.dAim,0),horiz:num(S.dHoriz,0),mount:S.dMount,mdl:S.dMdl,la:(S.dtype==='line'?laData(S.dMdl,num(S.dBox,6),num(S.dAim,0),S.dMount,S.dSplayAuto,S.dSplayMax,S.dRigPts,S.dVar):null),hd:(S.dtype==='line'?90:pdisp(S.dMdl)[0]),vd:(S.dtype==='line'?0:pdisp(S.dMdl)[1])};
         var dBoxH=(S.dtype==='line'?dG.n*dG.ch:0.4);
@@ -2441,7 +2442,13 @@
           var aT0=g.la.aims[0], aB0=g.la.aims[n-1];
           var anch=stack?[px+1,(Zy(s.z0)+Zy(s.z1))/2]:[px+1,Zy(s.z0)];
           var pA=sray(anch[0],anch[1],stack?aB0:aT0), pB=sray(anch[0],anch[1],stack?aT0:aB0);
-          x.fillStyle=s.c;x.globalAlpha=0.09;
+          // 총 커버리지(엣지 통의 상하 개구 포함): 위 통 −반각 ~ 아래 통 +반각
+          var msv=(typeof msOf==='function')?(msOf(g.mdl)||10):10;
+          var upA=(stack?aB0:aT0)-msv/2, loA=(stack?aT0:aB0)+msv/2;
+          var pU=sray(anch[0],anch[1],upA), pL=sray(anch[0],anch[1],loA);
+          x.fillStyle=s.c;x.globalAlpha=0.05;
+          x.beginPath();x.moveTo(anch[0],anch[1]);x.lineTo(pU[0],pU[1]);x.lineTo(pL[0],pL[1]);x.closePath();x.fill();
+          x.globalAlpha=0.09;
           x.beginPath();x.moveTo(anch[0],anch[1]);x.lineTo(pA[0],pA[1]);x.lineTo(pB[0],pB[1]);x.closePath();x.fill();x.globalAlpha=1;
           // 웨지 체인 + 통별 레이: 각 통 전면 중점 → 그 통의 조준각 (종단면 ray()와 동일 스타일)
           var fp=stack?[px,Zy(s.z1)]:[px,Zy(s.z0)];
@@ -2453,11 +2460,23 @@
             var pr=sray(rx0,ry0,g.la.aims[ci]);
             x.strokeStyle=bcol;x.globalAlpha=edge?0.55:0.2;x.lineWidth=edge?1.3:1;
             x.beginPath();x.moveTo(rx0,ry0);x.lineTo(pr[0],pr[1]);x.stroke();x.globalAlpha=1;
-            if(ci===0)firstP=pr; if(ci===n-1)lastP=pr;
+            if(ci===0){firstP=pr; var firstO=[rx0,ry0];} if(ci===n-1){lastP=pr; var lastO=[rx0,ry0];}
+            if(ci===0)s._fO=[rx0,ry0]; if(ci===n-1)s._lO=[rx0,ry0];
             fp=laCab(x,fp[0],fp[1],fhpx,dep,g.la.aims[ci],stack?-1:1,bcol,edge2);
           }
           landDot(firstP,s.c,'LA'+s.label+Math.round(firstP[0]));          // 첫 통 착지
           landDot(lastP,s.c,'LB'+s.label+Math.round(lastP[0]));            // 끝 통 착지
+          // 엣지 통 상하 분산(대시): 맨 위 통 위쪽 반각 · 맨 아래 통 아래쪽 반각 → 총 커버 범위
+          var upO=stack?s._lO:s._fO, loO=stack?s._fO:s._lO;
+          if(upO&&loO){
+            var pU2=sray(upO[0],upO[1],upA), pL2=sray(loO[0],loO[1],loA);
+            x.setLineDash([4,3]);x.strokeStyle=s.c;x.globalAlpha=.5;x.lineWidth=1.2;
+            x.beginPath();x.moveTo(upO[0],upO[1]);x.lineTo(pU2[0],pU2[1]);x.stroke();
+            x.beginPath();x.moveTo(loO[0],loO[1]);x.lineTo(pL2[0],pL2[1]);x.stroke();
+            x.setLineDash([]);x.globalAlpha=1;
+            landDot(pU2,s.c,'UE'+s.label+Math.round(pU2[0]));
+            landDot(pL2,s.c,'LE'+s.label+Math.round(pL2[0]));
+          }
           // 상·하단 지향각 태그(종단면 칩 스타일)
           var aT=g.la.aims[0], aB=g.la.aims[n-1];
           function fmtA(a){ return (a<-0.4?(-a).toFixed(0)+'°↑':a.toFixed(0)+'°↓'); }

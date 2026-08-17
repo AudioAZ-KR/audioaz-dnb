@@ -215,7 +215,7 @@
 #veModal .vetr input:focus{border-color:var(--brand);outline:none}
 #veModal .vetr input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 #veModal .vetr button[data-del]{background:none;border:none;color:var(--crit);cursor:pointer;font-size:14px;padding:0;line-height:1}
-#veModal .vesph,#veModal .vespr{display:grid;grid-template-columns:1.05fr .85fr .85fr .85fr .8fr .58fr 22px;gap:3px;align-items:center;padding:2px}
+#veModal .vesph,#veModal .vespr{display:grid;grid-template-columns:1fr .8fr .8fr .8fr 1fr .5fr 22px;gap:3px;align-items:center;padding:2px}
 #veModal .vesph{font-size:9px;color:var(--ink-3);font-family:var(--mono)}
 #veModal .vesph span{text-align:center}
 #veModal .vespr{border-radius:6px;margin-bottom:2px}
@@ -225,6 +225,10 @@
 #veModal .vespr input:disabled{opacity:.4}
 #veModal .vespr input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 #veModal .vespr .st{font-size:9.5px;font-family:var(--mono);text-align:center;color:var(--ink-3)}
+#veModal .veKnob{width:24px;height:24px;border-radius:50%;background:var(--panel-2);border:1.5px solid var(--line);position:relative;cursor:grab;flex:none;touch-action:none;user-select:none}
+#veModal .veKnob:hover{border-color:var(--brand);box-shadow:0 0 6px rgba(24,119,242,.35)}
+#veModal .veKnob i{position:absolute;left:calc(50% - 1px);top:2px;width:2px;height:9px;background:var(--brand);border-radius:1px;transform-origin:1px 9.5px;display:block;pointer-events:none}
+#veModal .veKnob:after{content:'';position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-1.5px 0 0 -1.5px;border-radius:50%;background:var(--ink-3)}
 #veModal .vespr.ov .st{color:var(--brand);font-weight:700}
 #veModal .vespr button[data-rs]{background:none;border:none;color:var(--ink-3);cursor:pointer;font-size:13px;padding:0;line-height:1}
 #veModal .vespr.ov button[data-rs]{color:var(--brand)}
@@ -264,7 +268,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.73</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.74</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -609,7 +613,7 @@
     </div>
   </div>
 </div>
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.73</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.74</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -2623,7 +2627,9 @@
           +'<input type="number" step="any" data-k="x" value="'+(+p.ex.toFixed(2))+'"'+dis+'>'
           +'<input type="number" step="any" data-k="y" value="'+(+p.ey.toFixed(2))+'" title="'+(p.mir?'좌우 대칭 폭(±)':'중심 오프셋(+우측)')+'"'+dis+'>'
           +(zEdit?'<input type="number" step="any" data-k="z" value="'+(+p.z.toFixed(2))+'">':'<input value="'+(+p.z.toFixed(2))+'" disabled>')
-          +(p.hk?'<input type="number" step="1" data-k="h" value="'+(num(S[p.hk],0))+'" title="토우(안쪽+) — 좌우 미러">':'<input value="—" disabled>')
+          +(p.hk?('<div style="display:flex;gap:3px;align-items:center;justify-content:center">'
+            +'<div class="veKnob" data-kpart="'+p.part+'" title="드래그=노브 회전 (토우 안쪽+)"><i style="transform:rotate('+(num(S[p.hk],0)*4.5)+'deg)"></i></div>'
+            +'<input type="number" step="1" data-k="h" value="'+(num(S[p.hk],0))+'" style="min-width:0;width:34px;padding:5px 2px" title="토우(안쪽+) — 좌우 미러"></div>'):'<input value="—" disabled>')
           +'<span class="st">'+(p.ov?'지정':'자동')+'</span>'
           +'<button type="button" data-rs="'+p.part+'" title="자동 위치로 복귀">↺</button></div>';
       }).join('');
@@ -2884,7 +2890,8 @@
           var part=tr.dataset.part,k=t.dataset.k,v=parseFloat(t.value); if(!isFinite(v)||!k)return;
           if(k==='h'){ var pdef=veSpkParts().filter(function(p){return p.part===part;})[0];
             if(pdef&&pdef.hk){ S[pdef.hk]=Math.max(-30,Math.min(30,v)); var hEl=$(pdef.hk); if(hEl)hEl.value=S[pdef.hk];
-              var hV=$(pdef.hk+'V'); if(hV)hV.textContent=S[pdef.hk]; }
+              var hV=$(pdef.hk+'V'); if(hV)hV.textContent=S[pdef.hk];
+              var kn3=tr.querySelector('.veKnob i'); if(kn3)kn3.style.transform='rotate('+(S[pdef.hk]*4.5)+'deg)'; }
             veSync(); drawPlan(); drawSide(); return; }
           if(k==='z'){ if(part==='main'){S.trim=Math.max(2,Math.min(30,v)); var tE=$('trim'); if(tE)tE.value=S.trim; var tV=$('trimV'); if(tV)tV.textContent=S.trim;}
             else if(part==='delay'){S.dHeight=Math.max(1,Math.min(20,v)); S.dHeightAuto=false; var dE=$('dHeight'); if(dE)dE.value=S.dHeight;}
@@ -2898,6 +2905,23 @@
           tr.classList.add('ov'); var st=tr.querySelector('.st'); if(st)st.textContent='지정';
         });
         srows.addEventListener('change',function(){ veSpkTable(); hPush(); });
+        var kDrag=null;
+        srows.addEventListener('pointerdown',function(e){ var kn=e.target.closest('.veKnob'); if(!kn)return;
+          e.preventDefault(); var r=kn.getBoundingClientRect();
+          kDrag={kn:kn,part:kn.dataset.kpart,cx:r.left+r.width/2,cy:r.top+r.height/2};
+          document.body.style.cursor='grabbing'; });
+        window.addEventListener('pointermove',function(e){ if(!kDrag)return;
+          var ang=Math.atan2(e.clientX-kDrag.cx,-(e.clientY-kDrag.cy))*180/Math.PI;   // 12시=0°, 시계+
+          ang=Math.max(-135,Math.min(135,ang));
+          var v=Math.round(ang/4.5);                                                   // ±135° → ±30
+          var pdef=veSpkParts().filter(function(p){return p.part===kDrag.part;})[0]; if(!pdef||!pdef.hk)return;
+          S[pdef.hk]=v;
+          var hEl=$(pdef.hk); if(hEl)hEl.value=v; var hV=$(pdef.hk+'V'); if(hV)hV.textContent=v;
+          var ii=kDrag.kn.querySelector('i'); if(ii)ii.style.transform='rotate('+(v*4.5)+'deg)';
+          var inp=kDrag.kn.parentElement.querySelector('input[data-k="h"]'); if(inp)inp.value=v;
+          veSync(); drawPlan(); drawSide();
+        });
+        window.addEventListener('pointerup',function(){ if(kDrag){ kDrag=null; document.body.style.cursor=''; hPush(); } });
         srows.addEventListener('click',function(e){ var rs=e.target.dataset.rs;
           if(rs!==undefined){ delete S.spkPos[rs]; redraw(); hPush(); } });
       }

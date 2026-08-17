@@ -237,11 +237,26 @@ class Builder:
             f"{R(fpos,4)},{R(rpos,4)},{R(spos,4)},{R(ox,2)},{R(oy,2)},{R(oz,2)},'standard');")
     def reg(self,part,dev,ch):
         self.parts.setdefault(part,[]).append((dev,ch))
+    def unit_of(self,part):
+        """파트→(서브넷, 시작번호). spec.unitIds(사용자 유닛ID 편집) 반영, 없으면 기본 스킴."""
+        um=getattr(self,'unitmap',None) or {}
+        def g(key,dsn):
+            v=um.get(key) or {}
+            try: sn=max(1,min(63,int(v.get('sn',dsn) or dsn)))
+            except Exception: sn=dsn
+            try: st=max(1,min(63,int(v.get('st',1) or 1)))
+            except Exception: st=1
+            return sn,st
+        pu=str(part).upper()
+        for k,key,d in (('MAIN','MAIN',1),('G.SUB','G.SUB',2),('FRONT FILL','Front fill',3),('DELAY','DELAY',4),('CENTER','CENTER',5),('OUT','OUT',6)):
+            if pu.startswith(k): return g(key,d)
+        return g('CUSTOM',7)
     def newdev(self,model,part,ch2=False):
         """파트 서브넷 기반 유닛ID(예: MAIN → 1.01,1.02…)와 이름을 자동 부여. 바이앰프는 OutputMode=8(2-Way Active)."""
         d=self.dev; self.dev+=1; e=self.sql.append
-        sn=subnet_of(part)
-        seq=self.subseq.get(sn,0)+1; self.subseq[sn]=seq
+        sn,_st=self.unit_of(part)
+        self.subseq[sn]=max(self.subseq.get(sn,_st-1),_st-1)   # 파트 시작번호가 더 크면 점프(서브넷 공유 시에도 시작 존중)
+        seq=self.subseq[sn]+1; self.subseq[sn]=seq
         label=f"{part} {sn}.{seq:02d}"
         e(f"INSERT INTO Devices(DeviceId,Model,RemoteIdSubnet,RemoteIdDevice,Name) VALUES({d},'{model}',{sn},{seq},'{label}');")
         e(f"INSERT INTO DevicesAmplifier(DeviceId,InputMode,OutputMode) VALUES({d},0,{8 if ch2 else 0});")
@@ -612,6 +627,7 @@ def build(spec,outpath):
     xC=_op('center','x',x_front); yC=_op('center','y',0.0)
     xO=_op('out','x',x_front);    yOt=_op('out','y',y_out)
     b=Builder()
+    b.unitmap=spec.get('unitIds') or {}
     b.snapdate=str(spec.get('date') or '')  # 스냅샷 CreatedOn(결정적 — JS와 패리티)
     m=spec.get('main',{}); _combo=False   # 포인트-스택 통합 앰프 여부(서브 별도생성 스킵 판정)
     if m.get('type')=='line' and m.get('mdl') in LINE:

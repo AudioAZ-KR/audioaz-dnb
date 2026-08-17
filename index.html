@@ -178,6 +178,19 @@
 #veModal #veCloseBtn{background:var(--brand);color:#fff;border:none;font-weight:800;font-size:14.5px;padding:11px 26px;border-radius:11px;box-shadow:0 3px 14px rgba(24,119,242,.45);cursor:pointer;letter-spacing:.02em}
 #veModal #veCloseBtn:hover{filter:brightness(1.12);transform:translateY(-1px)}
 #veModal #veCloseBtn:active{transform:translateY(0)}
+/* ── 유닛 ID 편집기 ── */
+#uidModal{display:none;position:fixed;inset:0;z-index:10000;background:rgba(5,8,14,.72);align-items:center;justify-content:center}
+#uidModal .uidCard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;width:min(480px,92vw);max-height:86vh;overflow:auto;box-shadow:0 12px 48px rgba(0,0,0,.5)}
+#uidModal h3{margin:0 0 6px;font-size:15px;color:var(--ink)}
+#uidModal .uidHint{font-size:11.5px;color:var(--ink-3);line-height:1.6;margin-bottom:12px}
+#uidModal .uidh,#uidModal .uidr{display:grid;grid-template-columns:1.2fr .9fr .9fr 1.3fr;gap:6px;align-items:center;padding:3px 0}
+#uidModal .uidh{font-size:10px;color:var(--ink-3);font-family:var(--mono)}
+#uidModal .uidh span{text-align:center}
+#uidModal .uidr .pn{font-size:12px;font-family:var(--mono);font-weight:700;display:flex;align-items:center;gap:6px}
+#uidModal .uidr .pn i{width:8px;height:8px;border-radius:2px}
+#uidModal .uidr input{width:100%;box-sizing:border-box;padding:7px 6px;font-size:13px;font-family:var(--mono);background:var(--panel-2);border:1px solid var(--line);border-radius:7px;color:var(--ink);text-align:center}
+#uidModal .uidr input:focus{border-color:var(--brand);outline:none}
+#uidModal .uidr .pv{font-size:11px;font-family:var(--mono);color:var(--ink-2);text-align:center}
 #veModal .vespacer{flex:1}
 #veModal .vetool{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 18px;border-bottom:1px solid var(--line);background:var(--panel-2)}
 #veModal .vetool .hint{font-size:11px;color:var(--ink-3);font-family:var(--mono)}
@@ -251,7 +264,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.71</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.72</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -261,6 +274,7 @@
       <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">버전</span>
       <span id="verBadge" style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--brand);background:rgba(24,119,242,.12);border-radius:6px;padding:6px 10px;min-width:36px;text-align:center;user-select:none" title="제목별 자동 버전 — 같은 제목으로 추출할 때마다 올라갑니다. 새 제목은 v.1부터.">v.1</span>
       <button class="themebtn" id="openbtn" type="button" title="저장된 설정(.json) 불러오기">설정 열기</button>
+      <button class="themebtn" id="unitBtn" type="button" title="앰프 유닛 ID(서브넷·시작번호) 편집 — 현장 관례에 맞게">유닛 ID</button>
       <input type="file" id="openFile" accept=".json,application/json" style="display:none">
       <button class="themebtn" id="genbtn" type="button" style="background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600">ArrayCalc 파일 생성 →</button>
       <button class="themebtn" id="rptbtn" type="button" style="border-color:var(--brand);color:var(--brand);font-weight:600">📄 시스템 리포트</button>
@@ -582,7 +596,18 @@
   </div>
 </div>
 
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.71</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="uidModal" role="dialog" aria-label="유닛 ID 편집기">
+  <div class="uidCard">
+    <h3>앰프 유닛 ID 편집 <span style="font-weight:400;font-size:11px;color:var(--ink-3);font-family:var(--mono)">Remote ID = [서브넷].[번호]</span></h3>
+    <div class="uidHint">파트별 <b>서브넷</b>과 <b>시작 번호</b>를 현장 관례에 맞게 바꾸세요. 생성되는 .dbpr·리포트에 그대로 반영됩니다. (각 1~63)</div>
+    <div id="uidRows"></div>
+    <div style="display:flex;gap:8px;justify-content:space-between;margin-top:12px">
+      <button type="button" class="themebtn" id="uidReset">기본값 복원</button>
+      <button type="button" class="themebtn" id="uidClose" style="background:var(--brand);color:#fff;border:none;font-weight:700;padding:9px 22px">✓ 완료</button>
+    </div>
+  </div>
+</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.72</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -702,7 +727,7 @@
     dOn:false,dtype:'line',dMdl:'XSL',dAmp:'D40',dBox:8,dAuto:true,dBoxAuto:true,dAim:0,dAimAuto:true, dSplayAuto:true,dSplayMax:8,dRigPts:'2', dMount:'flown', dHeight:7,dHeightAuto:true,
     cOn:false,cType:'auto',cMdl:'V10P',cAmp:'D80',cBox:1,cBoxAuto:true,cAim:0,cAimAuto:true,cRigPts:'2',cSplayAuto:true,cSplayMax:8,
     oOn:false,oType:'auto',oMdl:'Y',oAmp:'D80',oBox:6,oBoxAuto:true,oTilt:0,oTiltAuto:true,oHoriz:0,oRigPts:'2',oSplayAuto:true,oSplayMax:8,
-    projName:'',projVer:'v.1', mHoriz:0, dHoriz:0, cHoriz:0, vOn:false, vPlanes:[], spkPos:{}, customs:[], mVar:null, dVar:null, cVar:null, oVar:null, fVar:null};
+    projName:'',projVer:'v.1', mHoriz:0, dHoriz:0, cHoriz:0, unitIds:null, vOn:false, vPlanes:[], spkPos:{}, customs:[], mVar:null, dVar:null, cVar:null, oVar:null, fVar:null};
   function autoTilt(){ return 0; } // 기본 디폴트 틸트 0° — 실제 조준각은 ArrayCalc에서
   // 스택: 바닥 캐비닛 베이스 각도 = d&b 홀그리드 −7/−3.5/0/+3.5/+7° 이산값(V-Series 리깅 매뉴얼). 플라잉: 2°/홀
   var STACK_GRID=[-7,-3.5,0,3.5,7];
@@ -1717,9 +1742,17 @@
 
   // ══════════ 시스템 리포트 (인쇄→PDF) ══════════
   // 생성기(.dbpr)와 동일한 규칙으로 유닛ID·앰프 채널을 재현 → 현장에서 앰프 Remote ID·스피커 각도 지시용
+  function unitDefaults(){ return {'MAIN':{sn:1,st:1},'G.SUB':{sn:2,st:1},'Front fill':{sn:3,st:1},'DELAY':{sn:4,st:1},'CENTER':{sn:5,st:1},'OUT':{sn:6,st:1},'CUSTOM':{sn:7,st:1}}; }
+  function unitEff(){ var d=unitDefaults(), u=S.unitIds||{};
+    Object.keys(d).forEach(function(k){ var v=u[k]; if(v){ d[k]={sn:Math.max(1,Math.min(63,Math.trunc(+v.sn)||d[k].sn)), st:Math.max(1,Math.min(63,Math.trunc(+v.st)||d[k].st))}; } });
+    return d; }
+  function unitFor(part){ var e=unitEff(), pu=String(part).toUpperCase();
+    var T=[['MAIN','MAIN'],['G.SUB','G.SUB'],['FRONT FILL','Front fill'],['DELAY','DELAY'],['CENTER','CENTER'],['OUT','OUT']];
+    for(var i=0;i<T.length;i++){ if(pu.indexOf(T[i][0])===0)return e[T[i][1]]; }
+    return e['CUSTOM']; }
   function patchPlan(){
     var subseq={},parts=[];
-    function snOf(part){var M={'MAIN':1,'G.SUB':2,'FRONT FILL':3,'DELAY':4,'CENTER':5,'OUT':6};var pu=part.toUpperCase();for(var k in M){if(pu.indexOf(k)===0)return M[k];}return 7;}
+    function snOf(part){ var u=unitFor(part); subseq[u.sn]=Math.max(subseq[u.sn]===undefined?(u.st-1):subseq[u.sn], u.st-1); return u.sn; }
     function addPart(part,amp,cabs,ch2,link){
       if(!cabs||!cabs.length)return;
       var lk=Math.max(1,link||1); if(ch2&&lk>2)lk=2;
@@ -1746,8 +1779,10 @@
     var _comboRpt=(type==='point'&&S.mMount==='stack'&&!!_sPr&&S.sBox>=1&&(2+_subCh)<=4
                    &&!CH2_MODELS[S.mMdl]&&!CH2_MODELS[S.sMdl]&&_cCommon.length>0);
     if(_comboRpt){
-      var _cAmp=_cCommon[0], _seq=(subseq[1]||0)+1; subseq[1]=_seq;
-      var _dev={id:'1.'+(_seq<10?'0':'')+_seq, amp:_cAmp, rows:[]}, _CH=['A','B','C','D'], _ci=0;
+      var _cAmp=_cCommon[0], _um=unitFor('MAIN');
+      if(subseq[_um.sn]===undefined)subseq[_um.sn]=_um.st-1;
+      var _seq=subseq[_um.sn]+1; subseq[_um.sn]=_seq;
+      var _dev={id:_um.sn+'.'+(_seq<10?'0':'')+_seq, amp:_cAmp, rows:[]}, _CH=['A','B','C','D'], _ci=0;
       var _lr=function(i,n){return n===2?(i===0?'L':'R'):((i+1<10?'0':'')+(i+1));};
       // 채널 순서: 측별 탑→서브 인터리브(A=L탑,B=L서브,C=R탑,D=R서브) — 4코어 A/B·C/D 측당 통합 결선
       for(var _k=0;_k<Math.max(2,_subCh);_k++){
@@ -1918,6 +1953,7 @@
     // 전체 UI 상태를 함께 저장 → 나중에 '설정 열기'로 그대로 복원(어디서 잘못됐는지 검토용)
     spec._state=JSON.parse(JSON.stringify(S)); spec._state.projName=pn; spec._state.projVer=pv;
     spec.spkPos=(S.spkPos&&Object.keys(S.spkPos).length)?JSON.parse(JSON.stringify(S.spkPos)):null;
+    spec.unitIds=(S.unitIds&&Object.keys(S.unitIds).length)?JSON.parse(JSON.stringify(S.unitIds)):null;
     spec.customs=(S.customs&&S.customs.length)?S.customs.map(function(c){
       var o=JSON.parse(JSON.stringify(c));
       if(o.type==='line'){ try{ o.splay=splayArray(Math.max(1,Math.trunc(+o.box||1)),effSplay(true,+o.splayMax||8),msOf(o.mdl)); }catch(e){ o.splay=[]; } }
@@ -2996,6 +3032,33 @@
     }
     window.__cuRebuild();
   })();
+(function(){
+    var modal=$('uidModal'); if(!modal)return;
+    var NAMES=[['MAIN','메인','var(--accent)'],['G.SUB','서브','var(--violet)'],['Front fill','프론트필','var(--good)'],['DELAY','딜레이','var(--warn)'],['CENTER','센터','var(--cfill)'],['OUT','아웃','var(--ofill)'],['CUSTOM','커스텀(+추가)','#f97316']];
+    function rows(){
+      var e=unitEff();
+      $('uidRows').innerHTML='<div class="uidh"><span style="text-align:left">파트</span><span>서브넷</span><span>시작 번호</span><span>미리보기</span></div>'
+        +NAMES.map(function(nm){ var k=nm[0],v=e[k];
+          return '<div class="uidr" data-k="'+k+'">'
+            +'<span class="pn"><i style="background:'+nm[2]+'"></i>'+nm[1]+'</span>'
+            +'<input type="number" min="1" max="63" data-f="sn" value="'+v.sn+'">'
+            +'<input type="number" min="1" max="63" data-f="st" value="'+v.st+'">'
+            +'<span class="pv">'+v.sn+'.'+(v.st<10?'0':'')+v.st+' ~ '+v.sn+'.'+((v.st+1)<10?'0':'')+(v.st+1)+'…</span>'
+            +'</div>'; }).join('');
+    }
+    $('unitBtn').addEventListener('click',function(){ rows(); modal.style.display='flex'; });
+    $('uidClose').addEventListener('click',function(){ modal.style.display='none'; render(); });
+    modal.addEventListener('click',function(e){ if(e.target===modal){ modal.style.display='none'; render(); } });
+    $('uidReset').addEventListener('click',function(){ S.unitIds=null; rows(); });
+    $('uidRows').addEventListener('input',function(e){ var t=e.target,r=t.closest('.uidr'); if(!r)return;
+      var k=r.dataset.k,fd=t.dataset.f,v=Math.max(1,Math.min(63,Math.trunc(+t.value)||1));
+      if(!S.unitIds)S.unitIds={};
+      if(!S.unitIds[k])S.unitIds[k]={sn:unitEff()[k].sn,st:unitEff()[k].st};
+      S.unitIds[k][fd]=v;
+      var eff=unitEff()[k], pv=r.querySelector('.pv');
+      if(pv)pv.textContent=eff.sn+'.'+(eff.st<10?'0':'')+eff.st+' ~ '+eff.sn+'.'+((eff.st+1)<10?'0':'')+(eff.st+1)+'…';
+    });
+  })();
   seg('rigPts','rigPts');seg('fRigPts','fRigPts');seg('dRigPts','dRigPts');seg('cRigPts','cRigPts');seg('oRigPts','oRigPts');seg('mMount','mMount');seg('dMount','dMount');seg('oMount','oMount');
   $('preset').addEventListener('change',function(){S.preset=this.value;var p=PRESETS[this.value];if(p){Object.assign(S,p);
     ['depth','width','stageW','trim','spl'].forEach(function(k){$(k).value=S[k];$(k+'V').textContent=S[k];});$('program').value=S.program;
@@ -3348,10 +3411,22 @@ Builder.prototype.flyingFrame=function(sg,mdl,horiz,ox,oy,oz,single,cogHole,ncab
     +R(f[2],4)+","+R(r[2],4)+","+R(s[2],4)+","+R(ox,2)+","+R(oy,2)+","+R(oz,2)+",'standard');");
 };
 Builder.prototype.reg=function(part,dev,ch){if(!this.parts[part]){this.parts[part]=[];this.order.push(part);}this.parts[part].push([dev,ch]);};
+Builder.prototype.unitOf=function(part){
+  var um=this.unitmap||{};
+  function g(key,dsn){ var v=um[key]||{};
+    var sn=Math.max(1,Math.min(63,Math.trunc(+v.sn)||dsn));
+    var st=Math.max(1,Math.min(63,Math.trunc(+v.st)||1));
+    return [sn,st]; }
+  var pu=String(part).toUpperCase();
+  var T=[['MAIN','MAIN',1],['G.SUB','G.SUB',2],['FRONT FILL','Front fill',3],['DELAY','DELAY',4],['CENTER','CENTER',5],['OUT','OUT',6]];
+  for(var i=0;i<T.length;i++){ if(pu.indexOf(T[i][0])===0) return g(T[i][1],T[i][2]); }
+  return g('CUSTOM',7);
+};
 Builder.prototype.newdev=function(model,part,ch2){
   var d=this.dev++;var e=this.sql;
-  var sn=subnetOf(part);
-  var seq=(this.subseq[sn]||0)+1; this.subseq[sn]=seq;
+  var u=this.unitOf(part), sn=u[0], st=u[1];
+  this.subseq[sn]=Math.max(this.subseq[sn]===undefined?(st-1):this.subseq[sn], st-1);
+  var seq=this.subseq[sn]+1; this.subseq[sn]=seq;
   var label=part+' '+sn+'.'+(seq<10?'0':'')+seq;
   e.push("INSERT INTO Devices(DeviceId,Model,RemoteIdSubnet,RemoteIdDevice,Name) VALUES("+d+",'"+model+"',"+sn+","+seq+",'"+label+"');");
   e.push("INSERT INTO DevicesAmplifier(DeviceId,InputMode,OutputMode) VALUES("+d+",0,"+(ch2?8:0)+");");
@@ -3777,6 +3852,7 @@ function build(db,spec){
   var xC=_op('center','x',xF), yC=_op('center','y',0);
   var xO=_op('out','x',xF),    yOt=_op('out','y',yO);
   var b=new Builder();
+  b.unitmap=spec.unitIds||{};
   b.snapdate=String(spec.date||'');  // 스냅샷 CreatedOn(결정적 — 파이썬과 패리티)
   var m=spec.main||{}, _combo=false;   // 포인트-스택 통합 앰프 여부(서브 별도생성 스킵 판정)
   if(m.type==='line'&&LINE[m.mdl]){

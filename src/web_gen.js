@@ -125,10 +125,22 @@ Builder.prototype.flyingFrame=function(sg,mdl,horiz,ox,oy,oz,single,cogHole,ncab
     +R(f[2],4)+","+R(r[2],4)+","+R(s[2],4)+","+R(ox,2)+","+R(oy,2)+","+R(oz,2)+",'standard');");
 };
 Builder.prototype.reg=function(part,dev,ch){if(!this.parts[part]){this.parts[part]=[];this.order.push(part);}this.parts[part].push([dev,ch]);};
+Builder.prototype.unitOf=function(part){
+  var um=this.unitmap||{};
+  function g(key,dsn){ var v=um[key]||{};
+    var sn=Math.max(1,Math.min(63,Math.trunc(+v.sn)||dsn));
+    var st=Math.max(1,Math.min(63,Math.trunc(+v.st)||1));
+    return [sn,st]; }
+  var pu=String(part).toUpperCase();
+  var T=[['MAIN','MAIN',1],['G.SUB','G.SUB',2],['FRONT FILL','Front fill',3],['DELAY','DELAY',4],['CENTER','CENTER',5],['OUT','OUT',6]];
+  for(var i=0;i<T.length;i++){ if(pu.indexOf(T[i][0])===0) return g(T[i][1],T[i][2]); }
+  return g('CUSTOM',7);
+};
 Builder.prototype.newdev=function(model,part,ch2){
   var d=this.dev++;var e=this.sql;
-  var sn=subnetOf(part);
-  var seq=(this.subseq[sn]||0)+1; this.subseq[sn]=seq;
+  var u=this.unitOf(part), sn=u[0], st=u[1];
+  this.subseq[sn]=Math.max(this.subseq[sn]===undefined?(st-1):this.subseq[sn], st-1);
+  var seq=this.subseq[sn]+1; this.subseq[sn]=seq;
   var label=part+' '+sn+'.'+(seq<10?'0':'')+seq;
   e.push("INSERT INTO Devices(DeviceId,Model,RemoteIdSubnet,RemoteIdDevice,Name) VALUES("+d+",'"+model+"',"+sn+","+seq+",'"+label+"');");
   e.push("INSERT INTO DevicesAmplifier(DeviceId,InputMode,OutputMode) VALUES("+d+",0,"+(ch2?8:0)+");");
@@ -554,6 +566,7 @@ function build(db,spec){
   var xC=_op('center','x',xF), yC=_op('center','y',0);
   var xO=_op('out','x',xF),    yOt=_op('out','y',yO);
   var b=new Builder();
+  b.unitmap=spec.unitIds||{};
   b.snapdate=String(spec.date||'');  // 스냅샷 CreatedOn(결정적 — 파이썬과 패리티)
   var m=spec.main||{}, _combo=false;   // 포인트-스택 통합 앰프 여부(서브 별도생성 스킵 판정)
   if(m.type==='line'&&LINE[m.mdl]){

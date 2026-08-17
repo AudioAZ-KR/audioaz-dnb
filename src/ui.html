@@ -306,7 +306,7 @@
             <option value="arena">아레나 / 야외 (75 × 55 m)</option>
             <option value="custom">직접 입력</option>
           </select></label>
-        <div id="vLockNote" style="display:none;font-size:11px;color:var(--brand);font-family:var(--mono);margin:2px 0 8px">🗺 베뉴 편집기로 관리 중 — 프리셋·깊이·폭은 편집기의 관객면에서 자동 계산됩니다</div>
+        <div id="vLockNote" style="display:none;font-size:11px;color:var(--brand);font-family:var(--mono);margin:2px 0 8px">🗺 베뉴는 편집기로 관리 중 (깊이·폭 자동 계산)</div>
         <div class="two">
           <label class="f"><span class="flab">객석 깊이 <span class="fval"><span id="depthV">43</span>m</span></span><input type="range" id="depth" min="8" max="120" value="43"></label>
           <label class="f"><span class="flab">객석 폭 <span class="fval"><span id="widthV">41</span>m</span></span><input type="range" id="width" min="6" max="90" value="41"></label>
@@ -1385,7 +1385,7 @@
   function render(){
     paneDim();
     (function(){ var lk=!!(S.vOn&&S.vPlanes&&S.vPlanes.length);
-      ['preset','depth','width'].forEach(function(id){ var el=$(id); if(el){ el.disabled=lk; var lb=el.closest('label'); if(lb)lb.style.opacity=lk?0.42:''; } });
+      ['preset','depth','width'].forEach(function(id){ var el=$(id); if(el){ el.disabled=lk; var lb=el.closest('label'); if(lb)lb.style.display=lk?'none':''; } });
       var n=$('vLockNote'); if(n)n.style.display=lk?'':'none'; })();
     var type=decideType();
     // populate model+amp selects

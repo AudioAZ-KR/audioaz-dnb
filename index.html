@@ -268,7 +268,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.77</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.78</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -613,7 +613,7 @@
     </div>
   </div>
 </div>
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.77</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.78</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -1752,7 +1752,7 @@
 
   // ══════════ 시스템 리포트 (인쇄→PDF) ══════════
   // 생성기(.dbpr)와 동일한 규칙으로 유닛ID·앰프 채널을 재현 → 현장에서 앰프 Remote ID·스피커 각도 지시용
-  function unitDefaults(){ return {'MAIN L':{sn:1,st:1},'MAIN R':{sn:1,st:11},'G.SUB L':{sn:2,st:1},'G.SUB R':{sn:2,st:11},'Front fill':{sn:3,st:1},'DELAY L':{sn:4,st:1},'DELAY R':{sn:4,st:11},'CENTER':{sn:5,st:1},'OUT L':{sn:6,st:1},'OUT R':{sn:6,st:11},'CUSTOM':{sn:7,st:1}}; }   // R=11~ (L과 겹침 방지, 현장 관례)
+  function unitDefaults(){ return {'MAIN L':{sn:1,st:1},'MAIN R':{sn:2,st:1},'G.SUB L':{sn:3,st:1},'G.SUB R':{sn:4,st:1},'Front fill':{sn:5,st:1},'DELAY L':{sn:6,st:1},'DELAY R':{sn:7,st:1},'CENTER':{sn:8,st:1},'OUT L':{sn:9,st:1},'OUT R':{sn:10,st:1},'CUSTOM':{sn:11,st:1}}; }   // 파트별 고유 서브넷 — L/R 분리
   function unitEff(){ var d=unitDefaults(), u=S.unitIds||{};
     Object.keys(d).forEach(function(k){ var v=u[k]; if(v){ d[k]={sn:Math.max(1,Math.min(63,Math.trunc(+v.sn)||d[k].sn)), st:Math.max(1,Math.min(63,Math.trunc(+v.st)||d[k].st))}; } });
     return d; }
@@ -3468,17 +3468,17 @@ Builder.prototype.unitOf=function(part){
     var st=Math.max(1,Math.min(63,Math.trunc(+v.st)||dst));
     return [sn,st]; }
   var pu=String(part).toUpperCase(), um2=this.unitmap||{};
-  var T=[['MAIN L',['MAIN L','MAIN'],1,1],['MAIN R',['MAIN R','MAIN'],1,11],['MAIN',['MAIN L','MAIN'],1,1],
-         ['G.SUB L',['G.SUB L','G.SUB'],2,1],['G.SUB R',['G.SUB R','G.SUB'],2,11],['G.SUB',['G.SUB L','G.SUB'],2,1],
-         ['FRONT FILL',['Front fill'],3,1],
-         ['DELAY L',['DELAY L','DELAY'],4,1],['DELAY R',['DELAY R','DELAY'],4,11],['DELAY',['DELAY L','DELAY'],4,1],
-         ['CENTER',['CENTER'],5,1],
-         ['OUT L',['OUT L','OUT'],6,1],['OUT R',['OUT R','OUT'],6,11],['OUT',['OUT L','OUT'],6,1]];
+  var T=[['MAIN L',['MAIN L','MAIN'],1,1],['MAIN R',['MAIN R','MAIN'],2,1],['MAIN',['MAIN L','MAIN'],1,1],
+         ['G.SUB L',['G.SUB L','G.SUB'],3,1],['G.SUB R',['G.SUB R','G.SUB'],4,1],['G.SUB',['G.SUB L','G.SUB'],3,1],
+         ['FRONT FILL',['Front fill'],5,1],
+         ['DELAY L',['DELAY L','DELAY'],6,1],['DELAY R',['DELAY R','DELAY'],7,1],['DELAY',['DELAY L','DELAY'],6,1],
+         ['CENTER',['CENTER'],8,1],
+         ['OUT L',['OUT L','OUT'],9,1],['OUT R',['OUT R','OUT'],10,1],['OUT',['OUT L','OUT'],9,1]];
   for(var i=0;i<T.length;i++){ if(pu.indexOf(T[i][0])===0){
     var keys=T[i][1];
     for(var j=0;j<keys.length;j++){ if(um2[keys[j]]) return g(keys[j],T[i][2],T[i][3]); }
     return g(keys[keys.length-1],T[i][2],T[i][3]); } }
-  return g('CUSTOM',7);
+  return g('CUSTOM',11);
 };
 Builder.prototype.newdev=function(model,part,ch2){
   var d=this.dev++;var e=this.sql;

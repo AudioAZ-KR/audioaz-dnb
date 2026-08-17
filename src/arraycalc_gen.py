@@ -249,17 +249,17 @@ class Builder:
             return sn,st
         pu=str(part).upper()
         # L/R 개별 설정 우선(긴 키 먼저), 없으면 파트 공통 → 기본 스킴
-        for k,keys,d,dst in (('MAIN L',('MAIN L','MAIN'),1,1),('MAIN R',('MAIN R','MAIN'),1,11),('MAIN',('MAIN L','MAIN'),1,1),
-                         ('G.SUB L',('G.SUB L','G.SUB'),2,1),('G.SUB R',('G.SUB R','G.SUB'),2,11),('G.SUB',('G.SUB L','G.SUB'),2,1),
-                         ('FRONT FILL',('Front fill',),3,1),
-                         ('DELAY L',('DELAY L','DELAY'),4,1),('DELAY R',('DELAY R','DELAY'),4,11),('DELAY',('DELAY L','DELAY'),4,1),
-                         ('CENTER',('CENTER',),5,1),
-                         ('OUT L',('OUT L','OUT'),6,1),('OUT R',('OUT R','OUT'),6,11),('OUT',('OUT L','OUT'),6,1)):
+        for k,keys,d,dst in (('MAIN L',('MAIN L','MAIN'),1,1),('MAIN R',('MAIN R','MAIN'),2,1),('MAIN',('MAIN L','MAIN'),1,1),
+                         ('G.SUB L',('G.SUB L','G.SUB'),3,1),('G.SUB R',('G.SUB R','G.SUB'),4,1),('G.SUB',('G.SUB L','G.SUB'),3,1),
+                         ('FRONT FILL',('Front fill',),5,1),
+                         ('DELAY L',('DELAY L','DELAY'),6,1),('DELAY R',('DELAY R','DELAY'),7,1),('DELAY',('DELAY L','DELAY'),6,1),
+                         ('CENTER',('CENTER',),8,1),
+                         ('OUT L',('OUT L','OUT'),9,1),('OUT R',('OUT R','OUT'),10,1),('OUT',('OUT L','OUT'),9,1)):
             if pu.startswith(k):
                 for key in keys:
                     if (getattr(self,'unitmap',None) or {}).get(key): return g(key,d,dst)
                 return g(keys[-1],d,dst)
-        return g('CUSTOM',7)
+        return g('CUSTOM',11)
     def newdev(self,model,part,ch2=False):
         """파트 서브넷 기반 유닛ID(예: MAIN → 1.01,1.02…)와 이름을 자동 부여. 바이앰프는 OutputMode=8(2-Way Active)."""
         d=self.dev; self.dev+=1; e=self.sql.append

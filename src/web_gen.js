@@ -132,17 +132,17 @@ Builder.prototype.unitOf=function(part){
     var st=Math.max(1,Math.min(63,Math.trunc(+v.st)||dst));
     return [sn,st]; }
   var pu=String(part).toUpperCase(), um2=this.unitmap||{};
-  var T=[['MAIN L',['MAIN L','MAIN'],1,1],['MAIN R',['MAIN R','MAIN'],1,11],['MAIN',['MAIN L','MAIN'],1,1],
-         ['G.SUB L',['G.SUB L','G.SUB'],2,1],['G.SUB R',['G.SUB R','G.SUB'],2,11],['G.SUB',['G.SUB L','G.SUB'],2,1],
-         ['FRONT FILL',['Front fill'],3,1],
-         ['DELAY L',['DELAY L','DELAY'],4,1],['DELAY R',['DELAY R','DELAY'],4,11],['DELAY',['DELAY L','DELAY'],4,1],
-         ['CENTER',['CENTER'],5,1],
-         ['OUT L',['OUT L','OUT'],6,1],['OUT R',['OUT R','OUT'],6,11],['OUT',['OUT L','OUT'],6,1]];
+  var T=[['MAIN L',['MAIN L','MAIN'],1,1],['MAIN R',['MAIN R','MAIN'],2,1],['MAIN',['MAIN L','MAIN'],1,1],
+         ['G.SUB L',['G.SUB L','G.SUB'],3,1],['G.SUB R',['G.SUB R','G.SUB'],4,1],['G.SUB',['G.SUB L','G.SUB'],3,1],
+         ['FRONT FILL',['Front fill'],5,1],
+         ['DELAY L',['DELAY L','DELAY'],6,1],['DELAY R',['DELAY R','DELAY'],7,1],['DELAY',['DELAY L','DELAY'],6,1],
+         ['CENTER',['CENTER'],8,1],
+         ['OUT L',['OUT L','OUT'],9,1],['OUT R',['OUT R','OUT'],10,1],['OUT',['OUT L','OUT'],9,1]];
   for(var i=0;i<T.length;i++){ if(pu.indexOf(T[i][0])===0){
     var keys=T[i][1];
     for(var j=0;j<keys.length;j++){ if(um2[keys[j]]) return g(keys[j],T[i][2],T[i][3]); }
     return g(keys[keys.length-1],T[i][2],T[i][3]); } }
-  return g('CUSTOM',7);
+  return g('CUSTOM',11);
 };
 Builder.prototype.newdev=function(model,part,ch2){
   var d=this.dev++;var e=this.sql;

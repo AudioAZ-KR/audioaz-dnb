@@ -202,7 +202,7 @@
 #veModal .vecvwrap{flex:1;min-height:0;position:relative;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);overflow:hidden}
 #veModal .vecvwrap canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;touch-action:none}
 #veModal .vecvwrap .tag{position:absolute;top:6px;left:10px;font-size:10px;font-family:var(--mono);color:var(--ink-3);pointer-events:none;background:var(--panel-2);padding:1px 6px;border-radius:5px;opacity:.9}
-#veModal .veside{width:440px;min-width:380px;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow:hidden}
+#veModal .veside{width:560px;min-width:480px;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow:hidden}
 #veModal .veside .veh{padding:10px 14px 4px;font-size:12px;font-weight:700;color:var(--ink-2);font-family:var(--mono)}
 #veModal #veRows{padding:4px 10px 10px;overflow:auto;flex:1}
 #veModal .veth,#veModal .vetr{display:grid;grid-template-columns:1.2fr .9fr .9fr .9fr .9fr .9fr .9fr .9fr .9fr 20px;gap:3px;align-items:center}
@@ -215,7 +215,7 @@
 #veModal .vetr input:focus{border-color:var(--brand);outline:none}
 #veModal .vetr input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 #veModal .vetr button[data-del]{background:none;border:none;color:var(--crit);cursor:pointer;font-size:14px;padding:0;line-height:1}
-#veModal .vesph,#veModal .vespr{display:grid;grid-template-columns:1fr .8fr .8fr .8fr 1fr .5fr 22px;gap:3px;align-items:center;padding:2px}
+#veModal .vesph,#veModal .vespr{display:grid;grid-template-columns:.95fr .72fr .72fr .72fr 1fr 1fr .55fr .45fr 20px;gap:3px;align-items:center;padding:2px}
 #veModal .vesph{font-size:9px;color:var(--ink-3);font-family:var(--mono)}
 #veModal .vesph span{text-align:center}
 #veModal .vespr{border-radius:6px;margin-bottom:2px}
@@ -268,7 +268,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.78</span></h1>
+      <h1>d&b System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.79</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.</div>
       </div>
     </div>
@@ -613,7 +613,7 @@
     </div>
   </div>
 </div>
-<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.78</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
+<div id="verbadge"><b style="color:#1877F2">AudioAZ</b> <b>d&b System Designer BETA v1.79</b> · 2026-07-28<br>비공식 도구 — 결과 무보증 · ArrayCalc 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -2604,23 +2604,31 @@
       var xF=Math.round((vx0-2)*10)/10, yM=Math.round(vy*0.55*10)/10, yO=Math.round(vy*0.82*10)/10;
       var subFixed=(S.subPos==='flown'&&(S.flyMode||'integrated')==='integrated');
       var P=[];
-      P.push({part:'main',nm:'메인',c:'#1877F2',on:true,dx:xF,dy:yM,mir:true,z:trim,zk:'trim',hk:'mHoriz',hmin:-30,hmax:30});
+      P.push({part:'main',nm:'메인',c:'#1877F2',on:true,dx:xF,dy:yM,mir:true,z:trim,zk:'trim',hk:'mHoriz',hmin:-30,hmax:30,tk:'mTilt',tmin:-10,tmax:60,tauto:'mTiltAuto',sk:'splayMax',sauto:'splayAuto'});
       P.push({part:'sub',nm:'서브',c:'#a855f7',on:!!(S.sMdl&&num(S.sBox,0)>0),dx:xF,dy:yM,mir:true,z:(S.subPos==='flown'?trim-0.5:0),zk:null,fixed:subFixed});
-      P.push({part:'front',nm:'프론트필',c:'#22c55e',on:!!S.fOn,dx:(S.fType==='line'?0:xF),dy:0,mir:false,z:num(S.fHeight,(S.fType==='line'?2.5:1.2)),zk:'fHeight',hk:'fAim',hmin:-30,hmax:60,vert:true});
-      P.push({part:'delay',nm:'딜레이',c:'#eab308',on:!!S.dOn,dx:Math.round((xF+num(S.dDist,22))*10)/10,dy:yM,mir:true,z:num(S.dHeight,3),zk:'dHeight',hk:'dHoriz',hmin:-30,hmax:30});
-      P.push({part:'center',nm:'센터',c:'#f472b6',on:!!S.cOn,dx:xF,dy:0,mir:false,z:num(S.cHeight,trim),zk:'cHeight',hk:'cHoriz',hmin:-30,hmax:30});
-      P.push({part:'out',nm:'아웃',c:'#38bdf8',on:!!S.oOn,dx:xF,dy:yO,mir:true,z:trim-0.5,zk:null,hk:'oHoriz',hmin:-30,hmax:30});
+      P.push({part:'front',nm:'프론트필',c:'#22c55e',on:!!S.fOn,dx:(S.fType==='line'?0:xF),dy:0,mir:false,z:num(S.fHeight,(S.fType==='line'?2.5:1.2)),zk:'fHeight',hk:null,tk:'fAim',tmin:-30,tmax:60,tauto:'fAimAuto'});
+      P.push({part:'delay',nm:'딜레이',c:'#eab308',on:!!S.dOn,dx:Math.round((xF+num(S.dDist,22))*10)/10,dy:yM,mir:true,z:num(S.dHeight,3),zk:'dHeight',hk:'dHoriz',hmin:-30,hmax:30,tk:'dAim',tmin:-10,tmax:60,tauto:'dAimAuto',sk:'dSplayMax',sauto:'dSplayAuto'});
+      P.push({part:'center',nm:'센터',c:'#f472b6',on:!!S.cOn,dx:xF,dy:0,mir:false,z:num(S.cHeight,trim),zk:'cHeight',hk:'cHoriz',hmin:-30,hmax:30,tk:'cAim',tmin:-10,tmax:60,tauto:'cAimAuto',sk:'cSplayMax',sauto:'cSplayAuto'});
+      P.push({part:'out',nm:'아웃',c:'#38bdf8',on:!!S.oOn,dx:xF,dy:yO,mir:true,z:trim-0.5,zk:null,hk:'oHoriz',hmin:-30,hmax:30,tk:'oTilt',tmin:-10,tmax:60,tauto:'oTiltAuto',sk:'oSplayMax',sauto:'oSplayAuto'});
       P.forEach(function(p){ var o=OV[p.part]||{};
         p.ov=(o.x!==undefined||o.y!==undefined);
         p.ex=(o.x!==undefined&&o.x!==null)?+o.x:p.dx;
         p.ey=(o.y!==undefined&&o.y!==null)?+o.y:p.dy; });
       return P;
     }
+    function veFdef(p,kf){ if(!p)return null;
+      if(kf==='t')return p.tk?{key:p.tk,mn:(p.tmin!==undefined?p.tmin:-10),mx:(p.tmax!==undefined?p.tmax:60),auto:p.tauto}:null;
+      return p.hk?{key:p.hk,mn:(p.hmin!==undefined?p.hmin:-30),mx:(p.hmax!==undefined?p.hmax:30),auto:null}:null; }
     function veKnobRot(v,p){ var mn=(p&&p.hmin!==undefined)?p.hmin:-30, mx=(p&&p.hmax!==undefined)?p.hmax:30;
       return (v-(mn+mx)/2)*(360/(mx-mn)); }   // 파트 범위 전체 = 360° 한 바퀴
     function veSpkTable(){
       var el=document.getElementById('veSpkRows'); if(!el)return;
-      var head='<div class="vesph"><span style="text-align:left">파트</span><span>X깊이</span><span>Y좌우</span><span>Z높이</span><span>각도°</span><span>상태</span><span></span></div>';
+      var head='<div class="vesph"><span style="text-align:left">파트</span><span>X깊이</span><span>Y좌우</span><span>Z높이</span><span>토우°</span><span>틸트°</span><span>스플°</span><span>상태</span><span></span></div>';
+      function angCell(part,fd,kf,vert){ if(!fd)return '<input value="—" disabled>';
+        var v=+num(S[fd.key],0);
+        return '<div style="display:flex;gap:3px;align-items:center;justify-content:center">'
+          +'<div class="veKnob" data-kpart="'+part+'" data-kf="'+kf+'" title="위/아래 드래그'+(vert?'=상하(하향+)':'=토우(안쪽+)')+' · Shift=미세"><i style="transform:rotate('+veKnobRot(v,{hmin:fd.mn,hmax:fd.mx})+'deg)"></i></div>'
+          +'<input type="number" step="0.1" data-k="'+kf+'" value="'+(+v.toFixed(1))+'" style="min-width:0;width:36px;padding:5px 2px"></div>'; }
       var rows=veSpkParts().filter(function(p){return p.on;}).map(function(p){
         var yLab=p.mir?('±'+(+p.ey.toFixed(2))):(+p.ey.toFixed(2));
         var zEdit=!!p.zk, dis=p.fixed?' disabled':'';
@@ -2629,9 +2637,9 @@
           +'<input type="number" step="any" data-k="x" value="'+(+p.ex.toFixed(2))+'"'+dis+'>'
           +'<input type="number" step="any" data-k="y" value="'+(+p.ey.toFixed(2))+'" title="'+(p.mir?'좌우 대칭 폭(±)':'중심 오프셋(+우측)')+'"'+dis+'>'
           +(zEdit?'<input type="number" step="any" data-k="z" value="'+(+p.z.toFixed(2))+'">':'<input value="'+(+p.z.toFixed(2))+'" disabled>')
-          +(p.hk?('<div style="display:flex;gap:3px;align-items:center;justify-content:center">'
-            +'<div class="veKnob" data-kpart="'+p.part+'" title="'+(p.vert?'위/아래 드래그=상하 조준(하향+)':'위/아래 드래그=토우(안쪽+)')+' · Shift=미세 0.05°"><i style="transform:rotate('+veKnobRot(num(S[p.hk],0),p)+'deg)"></i></div>'
-            +'<input type="number" step="0.1" data-k="h" value="'+(+num(S[p.hk],0).toFixed(1))+'" style="min-width:0;width:38px;padding:5px 2px" title="'+(p.vert?'상하 조준(하향+)':'토우(안쪽+) — 좌우 미러')+'"></div>'):'<input value="—" disabled>')
+          +angCell(p.part,veFdef(p,'h'),'h',false)
+          +angCell(p.part,veFdef(p,'t'),'t',true)
+          +(p.sk?'<input type="number" step="0.5" min="1" max="10" data-k="s" value="'+(+num(S[p.sk],8))+'" title="스플레이 하단 최대°" style="min-width:0;padding:5px 2px">':'<input value="—" disabled>')
           +'<span class="st">'+(p.ov?'지정':'자동')+'</span>'
           +'<button type="button" data-rs="'+p.part+'" title="자동 위치로 복귀">↺</button></div>';
       }).join('');
@@ -2890,12 +2898,17 @@
       if(srows){
         srows.addEventListener('input',function(e){ var t=e.target,tr=t.closest('.vespr'); if(!tr||t.disabled)return;
           var part=tr.dataset.part,k=t.dataset.k,v=parseFloat(t.value); if(!isFinite(v)||!k)return;
-          if(k==='h'){ var pdef=veSpkParts().filter(function(p){return p.part===part;})[0];
-            if(pdef&&pdef.hk){ S[pdef.hk]=Math.max(pdef.hmin!==undefined?pdef.hmin:-30,Math.min(pdef.hmax!==undefined?pdef.hmax:30,v));
-              if(pdef.hk==='fAim')S.fAimAuto=false;
-              var hEl=$(pdef.hk); if(hEl)hEl.value=S[pdef.hk];
-              var hV=$(pdef.hk+'V'); if(hV)hV.textContent=S[pdef.hk];
-              var kn3=tr.querySelector('.veKnob i'); if(kn3)kn3.style.transform='rotate('+veKnobRot(S[pdef.hk],pdef)+'deg)'; }
+          if(k==='h'||k==='t'){ var pdef=veSpkParts().filter(function(p){return p.part===part;})[0];
+            var fd2=veFdef(pdef,k);
+            if(fd2){ S[fd2.key]=Math.max(fd2.mn,Math.min(fd2.mx,v));
+              if(fd2.key==='fAim')S.fAimAuto=false; if(fd2.auto)S[fd2.auto]=false;
+              var hEl=$(fd2.key); if(hEl)hEl.value=S[fd2.key];
+              var hV=$(fd2.key+'V'); if(hV)hV.textContent=S[fd2.key];
+              var kn3=tr.querySelector('.veKnob[data-kf="'+k+'"] i'); if(kn3)kn3.style.transform='rotate('+veKnobRot(S[fd2.key],{hmin:fd2.mn,hmax:fd2.mx})+'deg)'; }
+            veSync(); drawPlan(); drawSide(); return; }
+          if(k==='s'){ var pdef3=veSpkParts().filter(function(p){return p.part===part;})[0];
+            if(pdef3&&pdef3.sk){ S[pdef3.sk]=Math.max(1,Math.min(10,v)); if(pdef3.sauto)S[pdef3.sauto]=false;
+              var sE=$(pdef3.sk); if(sE)sE.value=S[pdef3.sk]; var sV=$(pdef3.sk+'V'); if(sV)sV.textContent=S[pdef3.sk]; }
             veSync(); drawPlan(); drawSide(); return; }
           if(k==='z'){ if(part==='main'){S.trim=Math.max(2,Math.min(30,v)); var tE=$('trim'); if(tE)tE.value=S.trim; var tV=$('trimV'); if(tV)tV.textContent=S.trim;}
             else if(part==='delay'){S.dHeight=Math.max(1,Math.min(20,v)); S.dHeightAuto=false; var dE=$('dHeight'); if(dE)dE.value=S.dHeight;}
@@ -2913,17 +2926,19 @@
         srows.addEventListener('pointerdown',function(e){ var kn=e.target.closest('.veKnob'); if(!kn)return;
           e.preventDefault();
           var pd0=veSpkParts().filter(function(p){return p.part===kn.dataset.kpart;})[0];
-          kDrag={kn:kn,part:kn.dataset.kpart,y0:e.clientY,v0:(pd0&&pd0.hk)?num(S[pd0.hk],0):0};
+          var kf0=kn.dataset.kf||'h', fd0=veFdef(pd0,kf0);
+          kDrag={kn:kn,part:kn.dataset.kpart,kf:kf0,y0:e.clientY,v0:fd0?num(S[fd0.key],0):0};
           document.body.style.cursor='ns-resize'; });
         window.addEventListener('pointermove',function(e){ if(!kDrag)return;
           var sens=e.shiftKey?0.05:0.2;                                              // 상하 드래그: 위=+ (Shift=미세)
           var v=Math.round((kDrag.v0+(kDrag.y0-e.clientY)*sens)*10)/10;
-          var pdef=veSpkParts().filter(function(p){return p.part===kDrag.part;})[0]; if(!pdef||!pdef.hk)return;
-          v=Math.max(pdef.hmin!==undefined?pdef.hmin:-30,Math.min(pdef.hmax!==undefined?pdef.hmax:30,v));
-          S[pdef.hk]=v; if(pdef.hk==='fAim')S.fAimAuto=false;
-          var hEl=$(pdef.hk); if(hEl)hEl.value=v; var hV=$(pdef.hk+'V'); if(hV)hV.textContent=v;
-          var ii=kDrag.kn.querySelector('i'); if(ii)ii.style.transform='rotate('+veKnobRot(v,pdef)+'deg)';
-          var inp=kDrag.kn.parentElement.querySelector('input[data-k="h"]'); if(inp)inp.value=v;
+          var pdef=veSpkParts().filter(function(p){return p.part===kDrag.part;})[0];
+          var fd=veFdef(pdef,kDrag.kf||'h'); if(!fd)return;
+          v=Math.max(fd.mn,Math.min(fd.mx,v));
+          S[fd.key]=v; if(fd.key==='fAim')S.fAimAuto=false; if(fd.auto)S[fd.auto]=false;
+          var hEl=$(fd.key); if(hEl)hEl.value=v; var hV=$(fd.key+'V'); if(hV)hV.textContent=v;
+          var ii=kDrag.kn.querySelector('i'); if(ii)ii.style.transform='rotate('+veKnobRot(v,{hmin:fd.mn,hmax:fd.mx})+'deg)';
+          var inp=kDrag.kn.parentElement.querySelector('input[data-k="'+(kDrag.kf||'h')+'"]'); if(inp)inp.value=v;
           veSync(); drawPlan(); drawSide();
         });
         window.addEventListener('pointerup',function(){ if(kDrag){ kDrag=null; document.body.style.cursor=''; hPush(); } });

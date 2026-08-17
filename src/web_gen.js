@@ -127,21 +127,21 @@ Builder.prototype.flyingFrame=function(sg,mdl,horiz,ox,oy,oz,single,cogHole,ncab
 Builder.prototype.reg=function(part,dev,ch){if(!this.parts[part]){this.parts[part]=[];this.order.push(part);}this.parts[part].push([dev,ch]);};
 Builder.prototype.unitOf=function(part){
   var um=this.unitmap||{};
-  function g(key,dsn){ var v=um[key]||{};
+  function g(key,dsn,dst){ var v=um[key]||{}; dst=dst||1;
     var sn=Math.max(1,Math.min(63,Math.trunc(+v.sn)||dsn));
-    var st=Math.max(1,Math.min(63,Math.trunc(+v.st)||1));
+    var st=Math.max(1,Math.min(63,Math.trunc(+v.st)||dst));
     return [sn,st]; }
   var pu=String(part).toUpperCase(), um2=this.unitmap||{};
-  var T=[['MAIN L',['MAIN L','MAIN'],1],['MAIN R',['MAIN R','MAIN'],1],['MAIN',['MAIN L','MAIN'],1],
-         ['G.SUB L',['G.SUB L','G.SUB'],2],['G.SUB R',['G.SUB R','G.SUB'],2],['G.SUB',['G.SUB L','G.SUB'],2],
-         ['FRONT FILL',['Front fill'],3],
-         ['DELAY L',['DELAY L','DELAY'],4],['DELAY R',['DELAY R','DELAY'],4],['DELAY',['DELAY L','DELAY'],4],
-         ['CENTER',['CENTER'],5],
-         ['OUT L',['OUT L','OUT'],6],['OUT R',['OUT R','OUT'],6],['OUT',['OUT L','OUT'],6]];
+  var T=[['MAIN L',['MAIN L','MAIN'],1,1],['MAIN R',['MAIN R','MAIN'],1,11],['MAIN',['MAIN L','MAIN'],1,1],
+         ['G.SUB L',['G.SUB L','G.SUB'],2,1],['G.SUB R',['G.SUB R','G.SUB'],2,11],['G.SUB',['G.SUB L','G.SUB'],2,1],
+         ['FRONT FILL',['Front fill'],3,1],
+         ['DELAY L',['DELAY L','DELAY'],4,1],['DELAY R',['DELAY R','DELAY'],4,11],['DELAY',['DELAY L','DELAY'],4,1],
+         ['CENTER',['CENTER'],5,1],
+         ['OUT L',['OUT L','OUT'],6,1],['OUT R',['OUT R','OUT'],6,11],['OUT',['OUT L','OUT'],6,1]];
   for(var i=0;i<T.length;i++){ if(pu.indexOf(T[i][0])===0){
     var keys=T[i][1];
-    for(var j=0;j<keys.length;j++){ if(um2[keys[j]]) return g(keys[j],T[i][2]); }
-    return g(keys[keys.length-1],T[i][2]); } }
+    for(var j=0;j<keys.length;j++){ if(um2[keys[j]]) return g(keys[j],T[i][2],T[i][3]); }
+    return g(keys[keys.length-1],T[i][2],T[i][3]); } }
   return g('CUSTOM',7);
 };
 Builder.prototype.newdev=function(model,part,ch2){

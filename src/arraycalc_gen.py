@@ -248,8 +248,17 @@ class Builder:
             except Exception: st=1
             return sn,st
         pu=str(part).upper()
-        for k,key,d in (('MAIN','MAIN',1),('G.SUB','G.SUB',2),('FRONT FILL','Front fill',3),('DELAY','DELAY',4),('CENTER','CENTER',5),('OUT','OUT',6)):
-            if pu.startswith(k): return g(key,d)
+        # L/R 개별 설정 우선(긴 키 먼저), 없으면 파트 공통 → 기본 스킴
+        for k,keys,d in (('MAIN L',('MAIN L','MAIN'),1),('MAIN R',('MAIN R','MAIN'),1),('MAIN',('MAIN L','MAIN'),1),
+                         ('G.SUB L',('G.SUB L','G.SUB'),2),('G.SUB R',('G.SUB R','G.SUB'),2),('G.SUB',('G.SUB L','G.SUB'),2),
+                         ('FRONT FILL',('Front fill',),3),
+                         ('DELAY L',('DELAY L','DELAY'),4),('DELAY R',('DELAY R','DELAY'),4),('DELAY',('DELAY L','DELAY'),4),
+                         ('CENTER',('CENTER',),5),
+                         ('OUT L',('OUT L','OUT'),6),('OUT R',('OUT R','OUT'),6),('OUT',('OUT L','OUT'),6)):
+            if pu.startswith(k):
+                for key in keys:
+                    if (getattr(self,'unitmap',None) or {}).get(key): return g(key,d)
+                return g(keys[-1],d)
         return g('CUSTOM',7)
     def newdev(self,model,part,ch2=False):
         """파트 서브넷 기반 유닛ID(예: MAIN → 1.01,1.02…)와 이름을 자동 부여. 바이앰프는 OutputMode=8(2-Way Active)."""
@@ -770,7 +779,12 @@ def build(spec,outpath):
             for k in range(fn):
                 y=(-1+2*k/(fn-1))*hw if fn>1 else 0.0
                 pos.append((R(xS+0.6,2), R(y,2), 0.0))
-        b.sub_stack('G.SUB',ssys,s.get('amp','D90'),sid,pos,sym=1,link=s.get('link',1))
+        if s.get('stereo'):
+            posL=[p for p in pos if p[1]<0 or p[1]==0]; posR=[p for p in pos if p[1]>0]   # 센터(0)는 L에
+            if posL: b.sub_stack('G.SUB L',ssys,s.get('amp','D90'),sid,posL,sym=0,link=s.get('link',1))
+            if posR: b.sub_stack('G.SUB R',ssys,s.get('amp','D90'),sid,posR,sym=0,link=s.get('link',1))
+        else:
+            b.sub_stack('G.SUB',ssys,s.get('amp','D90'),sid,pos,sym=1,link=s.get('link',1))
     elif s.get('mdl'): warnings.append(f"서브 {s.get('mdl')} 미보유→건너뜀")
     f=spec.get('front',{})
     if f.get('on'):

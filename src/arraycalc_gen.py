@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """AudioAZ ArrayCalc 생성기 — spec dict → 열리는 .dbpr. 베이스/베뉴는 d&B R1 File 폴더 참조."""
-import os, sqlite3, shutil, datetime, math
+import os, sqlite3, shutil, datetime, math, json as _json
 def R(v,d=0):
     "JS Math.round와 동일한 반올림(floor(x+0.5)) — 웹 생성기와 바이트 단위 일치 보장"
     m=10**d
@@ -874,6 +874,13 @@ def build(spec,outpath):
     b.flushdev()
     b.sql.append("COMMIT;")
     cur.executescript("\n".join(b.sql)); con.commit()
+    # 전체 설계 스펙 임베드 — 이 도구에서 .dbpr을 다시 열면 전체 복원 가능 (ArrayCalc는 이 테이블을 읽지 않음)
+    try:
+        cur.execute("CREATE TABLE IF NOT EXISTS AzSpec(Json TEXT)")
+        cur.execute("INSERT INTO AzSpec VALUES(?)",(_json.dumps(spec,ensure_ascii=False),))
+        con.commit()
+    except Exception:
+        pass
     r1_overview(con,cur,b.parts)
     ok=cur.execute("PRAGMA integrity_check;").fetchone()[0]
     ncab=cur.execute("SELECT COUNT(*) FROM Cabinets").fetchone()[0]

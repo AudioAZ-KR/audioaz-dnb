@@ -295,7 +295,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>AudioAZ System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:11px;font-family:var(--mono);color:var(--ink-3);vertical-align:middle;position:relative;top:-3px">for d&amp;b</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.86</span></h1>
+      <h1>AudioAZ System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:11px;font-family:var(--mono);color:var(--ink-3);vertical-align:middle;position:relative;top:-3px">for d&amp;b</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.87</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.<br><span data-t="sub2" style="font-size:11px;color:var(--ink-3)">AudioAZ가 만든 <b>독립·비공식</b> 도구입니다. d&amp;b audiotechnik과 무관하며 공식 승인·제휴가 아닙니다. <button type="button" id="legalBtn" style="background:none;border:none;color:var(--brand);cursor:pointer;text-decoration:underline;font-size:11px;padding:0">고지·라이선스</button></span></div>
       </div>
     </div>
@@ -677,7 +677,7 @@
     </div>
   </div>
 </div>
-<div id="verbadge" data-t="foot"><b style="color:#1877F2">AudioAZ</b> <b>AudioAZ System Designer BETA v1.86</b> · 2026-08 · <span style="opacity:.85">Made in Korea 🇰🇷</span><br>비공식·독립 도구 — d&amp;b audiotechnik과 무관 · 결과 무보증 · 리깅/하중은 공식 ArrayCalc·전문가 검증 필수</div>
+<div id="verbadge" data-t="foot"><b style="color:#1877F2">AudioAZ</b> <b>AudioAZ System Designer BETA v1.87</b> · 2026-08 · <span style="opacity:.85">Made in Korea 🇰🇷</span><br>비공식·독립 도구 — d&amp;b audiotechnik과 무관 · 결과 무보증 · 리깅/하중은 공식 ArrayCalc·전문가 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -2489,6 +2489,16 @@
           [[ (c.fl.x+c.bl.x)/2,(c.fl.y+c.bl.y)/2 ],[ (c.fr.x+c.br.x)/2,(c.fr.y+c.br.y)/2 ],
            [ (c.fl.x+c.fr.x)/2,(c.fl.y+c.fr.y)/2 ],[ (c.bl.x+c.br.x)/2,(c.bl.y+c.br.y)/2 ]].forEach(function(p){
             x.fillStyle='#fff';x.strokeStyle=col;x.lineWidth=1.4;x.fillRect(p[0]-3.5,p[1]-3.5,7,7);x.strokeRect(p[0]-3.5,p[1]-3.5,7,7); });
+          // 방향키 대상인 변·꼭지점을 흰색으로 강조
+          if(veLastSel==='plane'&&veSelMode&&veSelMode!=='move'&&veSelMode!=='smove'){
+            var SM=veSelMode;
+            var segHL=function(a,b2){ x.strokeStyle='#fff';x.lineWidth=4;x.globalAlpha=.95;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b2.x,b2.y);x.stroke();x.globalAlpha=1; };
+            var dotHL=function(p2){ x.fillStyle='#fff';x.beginPath();x.arc(p2.x,p2.y,7.5,0,7);x.fill();x.strokeStyle=col;x.lineWidth=2.6;x.stroke(); };
+            if(SM==='e:l')segHL(c.fl,c.bl); else if(SM==='e:r')segHL(c.fr,c.br);
+            else if(SM==='e:f')segHL(c.fl,c.fr); else if(SM==='e:b')segHL(c.bl,c.br);
+            else if(SM==='c:fl')dotHL(c.fl); else if(SM==='c:fr')dotHL(c.fr);
+            else if(SM==='c:bl')dotHL(c.bl); else if(SM==='c:br')dotHL(c.br);
+          }
         }
         x.fillStyle=col;x.globalAlpha=sel?1:.8;x.font='700 10px ui-monospace,monospace';x.textAlign='center';
         x.fillText(q.n,(c.fl.x+c.bl.x)/2,Yy((q.ycf+q.ycb)/2)+3);x.globalAlpha=1;
@@ -2644,7 +2654,9 @@
         x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.lineTo(x1,floorY);x.lineTo(x0,floorY);x.closePath();
         x.fillStyle=col;x.globalAlpha=sel?.2:.1;x.fill();x.globalAlpha=1;
         x.strokeStyle=col;x.lineWidth=sel?3:2;x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.stroke();
-        if(sel){ [[x0,y0],[x1,y1]].forEach(function(p){ x.fillStyle=col;x.beginPath();x.arc(p[0],p[1],4.5,0,7);x.fill();x.strokeStyle='#fff';x.lineWidth=1.3;x.stroke(); }); }
+        if(sel){ [[x0,y0],[x1,y1]].forEach(function(p){ x.fillStyle=col;x.beginPath();x.arc(p[0],p[1],4.5,0,7);x.fill();x.strokeStyle='#fff';x.lineWidth=1.3;x.stroke(); });
+          if(veLastSel==='plane'&&(veSelMode==='p0'||veSelMode==='p1')){ var hp=(veSelMode==='p0')?[x0,y0]:[x1,y1];
+            x.fillStyle='#fff';x.beginPath();x.arc(hp[0],hp[1],7.5,0,7);x.fill();x.strokeStyle=col;x.lineWidth=2.6;x.stroke(); } }
         x.fillStyle=col;x.globalAlpha=sel?1:.8;x.font='700 9.5px ui-monospace,monospace';x.textAlign='center';
         x.fillText(q.n+' '+(Math.round(q.d*10)/10)+'m',(x0+x1)/2,Math.min(y0,y1)-7);x.globalAlpha=1;
         // ── 높이 라벨 + 보조선 ──
@@ -2754,25 +2766,29 @@
     }
     function planHit(m){
       var best=spkHitPlan(m); if(best)return best;
-      (S.vPlanes||[]).forEach(function(q,i){
-        var c=planCorners(q);
-        [['fl',c.fl],['fr',c.fr],['bl',c.bl],['br',c.br]].forEach(function(cc){ if(!best&&Math.hypot(m.x-cc[1].x,m.y-cc[1].y)<10)best={i:i,mode:'c:'+cc[0]}; });
-        if(!best){ if(segDist(m,c.fl,c.bl)<7)best={i:i,mode:'e:l'};
-          else if(segDist(m,c.fr,c.br)<7)best={i:i,mode:'e:r'};
-          else if(segDist(m,c.fl,c.fr)<7)best={i:i,mode:'e:f'};
-          else if(segDist(m,c.bl,c.br)<7)best={i:i,mode:'e:b'};
-          else if(pip(m,c))best={i:i,mode:'move'}; }
-      });
+      // 3-패스: 꼭지점 → 변 → 면 내부. 각 패스는 위에 그려진 면(뒤 인덱스)부터 —
+      // 겹친 면에서 앞 면의 '내부'가 뒷 면의 '꼭지점·변'을 가로채지 않게.
+      var n=(S.vPlanes||[]).length, i, c;
+      for(i=n-1;i>=0&&!best;i--){ c=planCorners(S.vPlanes[i]);
+        var cs=[['fl',c.fl],['fr',c.fr],['bl',c.bl],['br',c.br]];
+        for(var j=0;j<4&&!best;j++){ if(Math.hypot(m.x-cs[j][1].x,m.y-cs[j][1].y)<10)best={i:i,mode:'c:'+cs[j][0]}; } }
+      for(i=n-1;i>=0&&!best;i--){ c=planCorners(S.vPlanes[i]);
+        if(segDist(m,c.fl,c.bl)<7)best={i:i,mode:'e:l'};
+        else if(segDist(m,c.fr,c.br)<7)best={i:i,mode:'e:r'};
+        else if(segDist(m,c.fl,c.fr)<7)best={i:i,mode:'e:f'};
+        else if(segDist(m,c.bl,c.br)<7)best={i:i,mode:'e:b'}; }
+      for(i=n-1;i>=0&&!best;i--){ if(pip(m,planCorners(S.vPlanes[i])))best={i:i,mode:'move'}; }
       return best;
     }
     function sideHit(m){
       var best=spkHitSide(m); if(best)return best;
-      (S.vPlanes||[]).forEach(function(q,i){
-        var x0=ST.padL+(q.x-ST.dMin)*ST.sx,y0=ST.floorY-q.z0*ST.sz,x1=ST.padL+(q.x+q.d-ST.dMin)*ST.sx,y1=ST.floorY-q.z1*ST.sz;
-        if(Math.hypot(m.x-x0,m.y-y0)<11) best={i:i,mode:'p0'};
-        else if(Math.hypot(m.x-x1,m.y-y1)<11) best={i:i,mode:'p1'};
-        else if(!best&&segDist(m,{x:x0,y:y0},{x:x1,y:y1})<9) best={i:i,mode:'smove'};
-      });
+      var n=(S.vPlanes||[]).length, i, q, x0,y0,x1,y1;
+      function XY(q2){ return [ST.padL+(q2.x-ST.dMin)*ST.sx,ST.floorY-q2.z0*ST.sz,ST.padL+(q2.x+q2.d-ST.dMin)*ST.sx,ST.floorY-q2.z1*ST.sz]; }
+      for(i=n-1;i>=0&&!best;i--){ q=S.vPlanes[i]; var g=XY(q);
+        if(Math.hypot(m.x-g[0],m.y-g[1])<11) best={i:i,mode:'p0'};
+        else if(Math.hypot(m.x-g[2],m.y-g[3])<11) best={i:i,mode:'p1'}; }
+      for(i=n-1;i>=0&&!best;i--){ q=S.vPlanes[i]; var g2=XY(q);
+        if(segDist(m,{x:g2[0],y:g2[1]},{x:g2[2],y:g2[3]})<9) best={i:i,mode:'smove'}; }
       return best;
     }
     function relPos(cv,e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }

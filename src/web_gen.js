@@ -546,7 +546,7 @@ function build(db,spec){
   var vr=db.exec("SELECT min(p.X+o.OriginX),max(p.X+o.OriginX),max(abs(p.Y+o.OriginY)) FROM VenueObjectPoints p JOIN VenueObjects o USING(VenueObjectId)");
   var row=(vr.length&&vr[0].values[0][0]!==null)?vr[0].values[0]:[0,22,15];
   var vx0=row[0],vx1=row[1],vy=row[2];
-  var xF=R(vx0-2,1);
+  var xF=0;                                          // 무대앞 고정 — 관객면 이동과 독립 (v1.88)
   var zM=+(((spec._state)||{}).trim||9);
   // 플라잉 서브 stacked: 메인 라인어레이를 서브 컬럼만큼 낮춤
   var _sub=spec.sub||{}, _subDrop=0, _subStackFly=false;

@@ -295,7 +295,7 @@
 </svg>
       <div>
       <div class="eyebrow" style="letter-spacing:.24em"><b style="color:var(--brand)">AudioAZ</b> · AUDIO PRODUCTION COMPANY</div>
-      <h1>AudioAZ System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:11px;font-family:var(--mono);color:var(--ink-3);vertical-align:middle;position:relative;top:-3px">for d&amp;b</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.87</span></h1>
+      <h1>AudioAZ System Designer <span style="font-size:11px;font-family:var(--mono);letter-spacing:.12em;vertical-align:middle;color:#fff;background:var(--brand);border-radius:999px;padding:3px 9px;position:relative;top:-3px">BETA</span> <span style="font-size:11px;font-family:var(--mono);color:var(--ink-3);vertical-align:middle;position:relative;top:-3px">for d&amp;b</span> <span style="font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;vertical-align:middle;color:var(--brand);border:1.5px solid var(--brand);border-radius:999px;padding:2px 10px;position:relative;top:-3px">v1.88</span></h1>
       <div class="sub">모델과 앰프를 고르면 — 목표 SPL·베뉴 크기로 통수를, 통수로 스플레이 각을 추천하고, 링크로 앰프를 절약해 ArrayCalc/R1 물량을 산출합니다.<br><span data-t="sub2" style="font-size:11px;color:var(--ink-3)">AudioAZ가 만든 <b>독립·비공식</b> 도구입니다. d&amp;b audiotechnik과 무관하며 공식 승인·제휴가 아닙니다. <button type="button" id="legalBtn" style="background:none;border:none;color:var(--brand);cursor:pointer;text-decoration:underline;font-size:11px;padding:0">고지·라이선스</button></span></div>
       </div>
     </div>
@@ -677,7 +677,7 @@
     </div>
   </div>
 </div>
-<div id="verbadge" data-t="foot"><b style="color:#1877F2">AudioAZ</b> <b>AudioAZ System Designer BETA v1.87</b> · 2026-08 · <span style="opacity:.85">Made in Korea 🇰🇷</span><br>비공식·독립 도구 — d&amp;b audiotechnik과 무관 · 결과 무보증 · 리깅/하중은 공식 ArrayCalc·전문가 검증 필수</div>
+<div id="verbadge" data-t="foot"><b style="color:#1877F2">AudioAZ</b> <b>AudioAZ System Designer BETA v1.88</b> · 2026-08 · <span style="opacity:.85">Made in Korea 🇰🇷</span><br>비공식·독립 도구 — d&amp;b audiotechnik과 무관 · 결과 무보증 · 리깅/하중은 공식 ArrayCalc·전문가 검증 필수</div>
 <script>
   (function(){
     if(!document.querySelector('meta[name=viewport]')){
@@ -935,7 +935,7 @@
       var ycf=+(q.ycf!==undefined?q.ycf:(q.yc||0)), ycb=+(q.ycb!==undefined?q.ycb:(q.yc||0));
       vx0=(vx0===null)?+q.x:Math.min(vx0,+q.x); vy=Math.max(vy||0,Math.abs(ycf)+wf/2,Math.abs(ycb)+wb/2); }); }
     if(vx0===null)vx0=2; if(!vy)vy=(+S.width||24)/2;
-    var xF=Math.round((vx0-2)*10)/10, yM=Math.round(vy*0.55*10)/10, yO=Math.round(vy*0.82*10)/10;
+    var xF=0, yM=Math.round(vy*0.55*10)/10, yO=Math.round(vy*0.82*10)/10;   // xF=무대앞 고정 — 관객면 이동과 독립
     function op(p,k,d){ var o=OV[p]||{}; var v=o[k]; return (v===undefined||v===null)?d:+v; }
     var fxv=op('front','x',null);
     return { mx:op('main','x',xF)-xF, my:op('main','y',yM),
@@ -952,15 +952,15 @@
         good=cs.getPropertyValue('--good').trim(),warn=cs.getPropertyValue('--warn').trim(),vio=cs.getPropertyValue('--violet').trim(),c12v=cs.getPropertyValue('--v12').trim();
     x.clearRect(0,0,W,H);
     function boxCol(mdl,vars,i,base){return (vars&&variantPair(mdl)&&vars[i]===variantPair(mdl)[1])?c12v:base;}
-    var padL=44,padR=22,padB=40,padT=16,maxD=Math.max(S.depth,20),sx=(W-padL-padR)/maxD,gY=H-padB;
+    var padL=44,padR=22,padB=40,padT=16,maxD=Math.max(S.depth,20);
+    if(S.vOn&&S.vPlanes&&S.vPlanes.length){ S.vPlanes.forEach(function(q){ if(q.k)return; maxD=Math.max(maxD,(+q.x)+(+q.d)); }); }
+    var sx=(W-padL-padR)/maxD,gY=H-padB;
     function X(m){return padL+m*sx;} function Y(h){return gY-h*((H-padT-padB)/16);}
     var rake=Math.min(S.depth*0.12,58);
     // ── 베뉴 편집기 프로파일(우측면도): 커스텀 베뉴가 있으면 실제 관객면 램프·발코니 사용 ──
     var _prof=null;
     if(S.vOn&&S.vPlanes&&S.vPlanes.length){
-      var _vx0=null; S.vPlanes.forEach(function(q){ if(q.k)return; _vx0=(_vx0===null)?+q.x:Math.min(_vx0,+q.x); });
-      if(_vx0===null)_vx0=2;
-      var _pxF=_vx0-2;
+      var _pxF=0;                                         // 무대앞 기준 절대좌표 (스피커 xF=0과 일치)
       _prof=S.vPlanes.filter(function(q){return !q.k;}).map(function(q){ return {x0:+q.x-_pxF, x1:+q.x-_pxF+(+q.d), z0:+(q.z0||0), z1:+(q.z1||0)}; })
                      .sort(function(a,b){ return a.x0-b.x0; });
       if(_prof&&!_prof.length)_prof=null;
@@ -2688,7 +2688,7 @@
       var vx0=null, vy=null;
       (S.vPlanes||[]).forEach(function(q){ if(q.k)return; vx0=(vx0===null)?q.x:Math.min(vx0,q.x); vy=Math.max(vy||0,Math.abs(q.ycf)+q.wf/2,Math.abs(q.ycb)+q.wb/2); });
       if(vx0===null)vx0=0; if(!vy)vy=15;
-      var xF=Math.round((vx0-2)*10)/10, yM=Math.round(vy*0.55*10)/10, yO=Math.round(vy*0.82*10)/10;
+      var xF=0, yM=Math.round(vy*0.55*10)/10, yO=Math.round(vy*0.82*10)/10;   // 무대앞 고정
       var subFixed=(S.subPos==='flown'&&(S.flyMode||'integrated')==='integrated');
       var P=[];
       P.push({part:'main',nm:'메인',c:'#1877F2',on:true,dx:xF,dy:yM,mir:true,z:trim,zk:'trim',hk:'mHoriz',hmin:-30,hmax:30,tk:'mTilt',tmin:-10,tmax:60,tauto:'mTiltAuto',sk:'splayMax',sauto:'splayAuto'});

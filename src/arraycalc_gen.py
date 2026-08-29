@@ -602,7 +602,7 @@ def build(spec,outpath):
     # 배치 좌표를 실제 베뉴 관객석 범위에서 계산(하드코딩 금지) — X=깊이(앞0→뒤), Y=폭(±)
     vr=cur.execute("SELECT min(p.X+o.OriginX),max(p.X+o.OriginX),max(abs(p.Y+o.OriginY)) FROM VenueObjectPoints p JOIN VenueObjects o USING(VenueObjectId)").fetchone()
     vx0,vx1,vy=(vr if vr and vr[0] is not None else (0.0,22.0,15.0))
-    x_front=R(vx0-2,1)                     # 무대 앞(관객석 2m 앞 어레이 라인)
+    x_front=0.0                            # 무대앞 고정 — 관객면을 옮겨도 스피커는 독립 (v1.88)
     z_main=float((spec.get('_state') or {}).get('trim') or 9)   # 플라잉 높이 = UI 트림
     # 플라잉 서브 stacked(서브 위·라인어레이 아래): 메인 라인어레이를 서브 컬럼 높이만큼 낮춰 건다
     _sub=spec.get('sub',{}); _sub_drop=0.0; _sub_stack_fly=False

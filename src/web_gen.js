@@ -180,6 +180,13 @@ var SNAP_PROPS=[['Config_InputEnable1','1.0'],['Config_InputEnable2','0.0'],['Co
   ['Config_LoadMatchCableCrossSection','4.0'],['Config_DelayOn','1'],['ChStatus_MsDelay','0.3'],
   ['Config_Mute','0'],['Config_PotiLevel','0.0'],
   ['Config_Filter1','0'],['Config_Filter2','0'],['Config_Filter3','0']];
+var SNAP_PROPS_SMALL=[['Config_InputEnable1','1.0'],['Config_InputEnable2','0'],['Config_InputEnable3','0'],
+ ['Config_InputEnable4','0'],['Config_InputEnable5','0.0'],['Config_InputEnable6','0.0'],
+ ['Config_InputEnable7','0.0'],['Config_InputEnable8','0.0'],
+ ['Config_DelayOn','1'],['Config_Mute','0'],['Config_PotiLevel','0.0'],
+ ['Config_Filter1','0'],['Config_Filter2','0'],['Config_Filter3','0'],['ChStatus_MsDelay','0.3']];
+var SMALL_AMPS={'D20':1,'D40':1};   // LoadMatch 미탑재 — D90식 세트 넣으면 ArrayCalc가 입력을 못 읽음(260903 오라클)
+
 Builder.prototype.flushsnap=function(){
   var e=this.sql;
   var sd=this.snapdate||'';
@@ -188,13 +195,19 @@ Builder.prototype.flushsnap=function(){
   var svid=1;
   for(var d in this.devinfo){
     var info=this.devinfo[d];
+    var small=!!SMALL_AMPS[info.model];
+    if(small){
+      e.push("INSERT INTO SnapshotValues(SnapshotValueId,SnapshotId,SnapshotTargetType,Value,TargetId,TargetNode,TargetProperty,TargetRecord) VALUES("+(svid++)+",1,0,1,"+d+",0,'Input_Digital_Mode',1);");
+      e.push("INSERT INTO SnapshotValues(SnapshotValueId,SnapshotId,SnapshotTargetType,Value,TargetId,TargetNode,TargetProperty,TargetRecord) VALUES("+(svid++)+",1,0,2,"+d+",0,'Input_Digital_Mode',3);");
+    }
+    var props=small?SNAP_PROPS_SMALL:SNAP_PROPS;
     var leads=(info.leads||[]).slice().sort(function(a,b){return a-b;}).filter(function(v,i,arr){return i===0||arr[i-1]!==v;});
     for(var i=0;i<leads.length;i++){
-      for(var j=0;j<SNAP_PROPS.length;j++){
-        var v=SNAP_PROPS[j][1];
-        if(SNAP_PROPS[j][0]==='Config_LoadMatchSpeakerCount')v=String(info.cnt[leads[i]]||1);
-        else if(SNAP_PROPS[j][0]==='ChStatus_MsDelay')v=String(info.dms===undefined?0.3:info.dms);
-        e.push("INSERT INTO SnapshotValues(SnapshotValueId,SnapshotId,SnapshotTargetType,Value,TargetId,TargetNode,TargetProperty,TargetRecord) VALUES("+(svid++)+",1,0,"+v+","+d+","+leads[i]+",'"+SNAP_PROPS[j][0]+"',0);");
+      for(var j=0;j<props.length;j++){
+        var v=props[j][1];
+        if(props[j][0]==='Config_LoadMatchSpeakerCount')v=String(info.cnt[leads[i]]||1);
+        else if(props[j][0]==='ChStatus_MsDelay')v=String(info.dms===undefined?0.3:info.dms);
+        e.push("INSERT INTO SnapshotValues(SnapshotValueId,SnapshotId,SnapshotTargetType,Value,TargetId,TargetNode,TargetProperty,TargetRecord) VALUES("+(svid++)+",1,0,"+v+","+d+","+leads[i]+",'"+props[j][0]+"',0);");
       }
     }
   }

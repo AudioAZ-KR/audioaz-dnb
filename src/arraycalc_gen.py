@@ -296,14 +296,27 @@ class Builder:
         ('Config_LoadMatchCableCrossSection','4.0'),('Config_DelayOn','1'),('ChStatus_MsDelay','0.3'),
         ('Config_Mute','0'),('Config_PotiLevel','0.0'),
         ('Config_Filter1','0'),('Config_Filter2','0'),('Config_Filter3','0')]
+    # D20/D40 채널 세트 — ArrayCalc 재저장본 오라클(260903, test3): LoadMatch 미탑재 앰프라
+    # LoadMatch 프로퍼티가 있으면 ArrayCalc가 채널 스냅을 못 읽고 입력을 0으로 초기화 → R1 'No input source' 경고.
+    SNAP_PROPS_SMALL=[('Config_InputEnable1','1.0'),('Config_InputEnable2','0'),('Config_InputEnable3','0'),
+        ('Config_InputEnable4','0'),('Config_InputEnable5','0.0'),('Config_InputEnable6','0.0'),
+        ('Config_InputEnable7','0.0'),('Config_InputEnable8','0.0'),
+        ('Config_DelayOn','1'),('Config_Mute','0'),('Config_PotiLevel','0.0'),
+        ('Config_Filter1','0'),('Config_Filter2','0'),('Config_Filter3','0'),('ChStatus_MsDelay','0.3')]
+    SMALL_AMPS={'D20','D40'}
     def flushsnap(self):
         e=self.sql.append
         created=f"20{self.snapdate[0:2]}-{self.snapdate[2:4]}-{self.snapdate[4:6]}T00:00:00.000Z" if getattr(self,'snapdate',None) else "2026-01-01T00:00:00.000Z"
         e(f"INSERT INTO Snapshots(SnapshotId,Type,Name,Comment,CreatedOn) VALUES(1,0,'ArrayCalc snapshot','Snapshot created automatically by ArrayCalc','{created}');")
         svid=1
         for d,info in self.devinfo.items():
+            small=(info.get('model') in self.SMALL_AMPS)
+            if small:   # 장치 레벨: 디지털 입력 모드 2행 (오라클 그대로: V=1/TR=1, V=2/TR=3)
+                e(f"INSERT INTO SnapshotValues(SnapshotValueId,SnapshotId,SnapshotTargetType,Value,TargetId,TargetNode,TargetProperty,TargetRecord) VALUES({svid},1,0,1,{d},0,'Input_Digital_Mode',1);"); svid+=1
+                e(f"INSERT INTO SnapshotValues(SnapshotValueId,SnapshotId,SnapshotTargetType,Value,TargetId,TargetNode,TargetProperty,TargetRecord) VALUES({svid},1,0,2,{d},0,'Input_Digital_Mode',3);"); svid+=1
+            props=self.SNAP_PROPS_SMALL if small else self.SNAP_PROPS
             for ch in sorted(set(info.get('leads',[]))):
-                for prop,val in self.SNAP_PROPS:
+                for prop,val in props:
                     if prop=='Config_LoadMatchSpeakerCount': val=str(info['cnt'].get(ch,1))
                     elif prop=='ChStatus_MsDelay': val=str(info.get('dms',0.3))
                     e(f"INSERT INTO SnapshotValues(SnapshotValueId,SnapshotId,SnapshotTargetType,Value,TargetId,TargetNode,TargetProperty,TargetRecord) VALUES({svid},1,0,{val},{d},{ch},'{prop}',0);")

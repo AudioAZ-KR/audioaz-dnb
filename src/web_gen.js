@@ -799,7 +799,7 @@ window.DBSD_WEBGEN=function(spec,env){
   var db=new env.SQL.Database(env.baseBytes);
   try{
     var b=build(db,spec);
-    try{ db.run("CREATE TABLE IF NOT EXISTS AzSpec(Json TEXT)"); db.run("INSERT INTO AzSpec VALUES(?)",[JSON.stringify(spec)]); }catch(e){}
+    // AzSpec 임베드 제거(v1.93) — ArrayCalc 재저장 "Failed to copy table(s)" 오류 원인. 읽기(임포트)는 유지.
     r1Overview(db,b,env.r1assets);
     var okr=db.exec('PRAGMA integrity_check;');
     var ok=okr.length&&okr[0].values[0][0]==='ok';

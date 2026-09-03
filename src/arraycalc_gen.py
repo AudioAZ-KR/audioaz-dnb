@@ -873,13 +873,8 @@ def build(spec,outpath):
     b.flushdev()
     b.sql.append("COMMIT;")
     cur.executescript("\n".join(b.sql)); con.commit()
-    # 전체 설계 스펙 임베드 — 이 도구에서 .dbpr을 다시 열면 전체 복원 가능 (ArrayCalc는 이 테이블을 읽지 않음)
-    try:
-        cur.execute("CREATE TABLE IF NOT EXISTS AzSpec(Json TEXT)")
-        cur.execute("INSERT INTO AzSpec VALUES(?)",(_json.dumps(spec,ensure_ascii=False),))
-        con.commit()
-    except Exception:
-        pass
+    # ⚠️ AzSpec 테이블 임베드 제거(v1.93): ArrayCalc 재저장 시 "Failed to copy table(s)" 오류 유발(260903).
+    #    전체 설계 백업은 설정 .json / 공유 링크로 제공. (구버전 파일의 AzSpec 읽기는 UI에서 계속 지원)
     r1_overview(con,cur,b.parts)
     ok=cur.execute("PRAGMA integrity_check;").fetchone()[0]
     ncab=cur.execute("SELECT COUNT(*) FROM Cabinets").fetchone()[0]

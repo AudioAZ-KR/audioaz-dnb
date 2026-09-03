@@ -17,7 +17,7 @@ for tk,body in parts.items():
     out=out.replace(tk,body,1)
 # ── 안전검증 (과거 wasm 소실 사고 방지) ──
 assert len(out)>1_400_000, "번들이 너무 작음 — wasm 소실 의심: %d"%len(out)
-vers=set(re.findall(r"BETA v(1\.\d+)",out))
+vers=set(re.findall(r"BETA v(\d+\.\d+)",out))
 assert len(vers)==1, "버전 문자열 불일치: %s"%vers
 assert out.count("DBSD-WEBGEN-START")==1 and "window.DBSD_WEBGEN" in out
 tgt=os.path.join(HERE,"index.html")

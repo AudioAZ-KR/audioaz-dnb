@@ -9,7 +9,7 @@ HP="$HOME/Projects/AudioAZ/audioazpro-site"
 echo "── 1/6 빌드·테스트"
 python3 build.py
 python3 tests/run_tests.py >/dev/null && echo "  테스트 ALL PASS"
-VER=$(grep -o 'BETA v1\.[0-9]*' index.html | head -1 | sed 's/.*BETA //')
+VER=$(grep -o 'BETA v[0-9]*\.[0-9]*' index.html | head -1 | sed 's/.*BETA //')
 echo "  버전: $VER"
 
 echo "── 2/6 로컬 채널"

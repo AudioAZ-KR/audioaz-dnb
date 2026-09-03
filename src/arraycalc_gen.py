@@ -560,8 +560,7 @@ def r1_overview(con,cur,parts):
     put(T['mf'],PosX=xr+177,PosY=353,TargetId=first_dev,TargetChannel=0)
     put(T['mp'],PosX=xr+177,PosY=384,TargetId=first_dev,TargetChannel=0)
     put(T['comfr'],PosX=xr,PosY=468,DisplayName='Comments')
-    put(T['txt1'],PosX=xr+20,PosY=530)
-    put(T['txt2'],PosX=xr+122,PosY=560)
+    # 브랜딩 텍스트(txt1/txt2)는 넣지 않음 — 오버뷰 디자인이 참고 기반이라 서명 제외 (v1.92)
     con.commit()
 
 def inject_param_venue(cur,spec):

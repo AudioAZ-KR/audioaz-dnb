@@ -472,8 +472,7 @@ function r1Overview(db,b,A){
   put(T.mf,{PosX:xr+177,PosY:353,TargetId:firstDev,TargetChannel:0});
   put(T.mp,{PosX:xr+177,PosY:384,TargetId:firstDev,TargetChannel:0});
   put(T.comfr,{PosX:xr,PosY:468,DisplayName:'Comments'});
-  put(T.txt1,{PosX:xr+20,PosY:530});
-  put(T.txt2,{PosX:xr+122,PosY:560});
+  // 브랜딩 텍스트(txt1/txt2) 미삽입 — 참고 기반 디자인이라 서명 제외 (v1.92)
 }
 
 function roundTrip(db,spec){

@@ -26,11 +26,25 @@ if [ "${1:-}" != "" ]; then
 fi
 git fetch origin && git push origin main
 
-echo "── 5/6 홈페이지 push"
+echo "── 5/6 홈페이지 push (staging 워크플로 — main 직접 push 금지 규칙)"
 cd "$HP"
+CURBR=$(git rev-parse --abbrev-ref HEAD)
+git fetch origin
+git checkout -q staging 2>/dev/null || git checkout -qb staging origin/staging
+git pull --rebase -q origin staging
+cd - >/dev/null && python3 tools/make_site_copy.py >/dev/null && cd "$HP"   # 브랜치 전환 후 사본 재생성
 git add tools/system-designer.html
 git -c user.name="AudioAZ" -c user.email="leogudwns@gmail.com" commit -m "sync: system-designer $VER" || echo "  (변경 없음)"
-git fetch origin && git pull --rebase -q origin main && git push origin main
+git push origin staging
+# staging에 도구 파일 외 다른 미검증 변경이 없을 때만 자동 라이브 승격
+OTHERS=$(git diff --name-only origin/main..staging | grep -v '^tools/system-designer.html$' || true)
+if [ -z "$OTHERS" ]; then
+  "$HOME/Projects/AudioAZ/promote-to-live.sh" >/dev/null && echo "  staging→main 승격 완료"
+else
+  echo "  ⚠️ staging에 다른 변경 있음 — 라이브 승격은 수동으로 (promote-to-live.sh):"
+  echo "$OTHERS" | sed 's/^/    /'
+fi
+git checkout -q "$CURBR" 2>/dev/null || true
 
 echo "── 6/6 라이브 검증 (최대 5분)"
 for i in $(seq 1 30); do

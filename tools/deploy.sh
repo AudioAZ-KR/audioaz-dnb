@@ -17,9 +17,6 @@ cp index.html "$HOME/.dbdesigner/designer.html"
 cp src/arraycalc_gen.py "$HOME/.dbdesigner/arraycalc_gen.py"
 cp index.html "$HOME/Downloads/AudioAZ System Designer BETA $VER.html"
 
-echo "── 3/6 홈페이지 사본 생성"
-python3 tools/make_site_copy.py
-
 echo "── 4/6 본체 push"
 if [ "${1:-}" != "" ]; then
   git add -A && git -c user.name="AudioAZ" -c user.email="leogudwns@gmail.com" commit -m "$1" || echo "  (변경 없음)"
@@ -29,6 +26,7 @@ git fetch origin && git push origin main
 echo "── 5/6 홈페이지 push (staging 워크플로 — main 직접 push 금지 규칙)"
 cd "$HP"
 CURBR=$(git rev-parse --abbrev-ref HEAD)
+git checkout -- tools/system-designer.html 2>/dev/null || true   # 미커밋 사본 폐기(전환 후 재생성)
 git fetch origin
 git checkout -q staging 2>/dev/null || git checkout -qb staging origin/staging
 git pull --rebase -q origin staging
